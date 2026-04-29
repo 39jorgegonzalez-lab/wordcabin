@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Words With Friends Helper — WordCabin</title>
+  <meta name="description" content="Find word ideas from your letters with an easy cozy tool." />
+  <link rel="canonical" href="https://wordcabin.com/" />
+  <meta property="og:title" content="WordCabin" />
+  <meta property="og:description" content="Unscramble words in a cozy little corner." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://wordcabin.com/" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="WordCabin home">
+      <span class="brand-mark">W</span>
+      <span>WordCabin</span>
+    </a>
+    <nav>
+      <a href="#tool">Unscramble</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Fast • Friendly • Cozy</p>
+        <h1>Words With Friends Helper</h1>
+        <p class="tagline">Unscramble words in a cozy little corner.</p>
+        <p class="intro">Find word ideas from your letters with an easy cozy tool. Type your letters, add a wildcard if you need one, and discover words in seconds.</p>
+        <a class="primary-link" href="#tool">Start unscrambling</a>
+      </div>
+      <div class="cabin-card" aria-hidden="true">
+        <div class="moon"></div>
+        <div class="window">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="desk">
+          <div class="tile">W</div><div class="tile">O</div><div class="tile">R</div><div class="tile">D</div>
+        </div>
+        <div class="steam one"></div><div class="steam two"></div>
+      </div>
+    </section>
+
+    <section id="tool" class="tool-shell">
+      <div class="tool-header">
+        <h2>Word Unscrambler</h2>
+        <p>Enter up to 15 letters. Use <strong>?</strong> as a wildcard.</p>
+      </div>
+
+      <div class="input-row">
+        <label for="letters" class="sr-only">Letters to unscramble</label>
+        <input id="letters" maxlength="15" autocomplete="off" placeholder="Example: cabinword" />
+        <button id="solveBtn">Unscramble</button>
+      </div>
+
+      <details class="filters" open>
+        <summary>Filters</summary>
+        <div class="filter-grid">
+          <label>Starts with <input id="starts" placeholder="ex: ca" /></label>
+          <label>Contains <input id="contains" placeholder="ex: in" /></label>
+          <label>Ends with <input id="ends" placeholder="ex: d" /></label>
+          <label>Length
+            <select id="length">
+              <option value="">Any</option>
+              <option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+            </select>
+          </label>
+          <label>Sort
+            <select id="sort">
+              <option value="score">Best score</option>
+              <option value="length">Longest first</option>
+              <option value="az">A to Z</option>
+            </select>
+          </label>
+        </div>
+      </details>
+
+      <div class="quick-examples">
+        <button data-example="listen">listen</button>
+        <button data-example="garden">garden</button>
+        <button data-example="school?">school?</button>
+        <button data-example="cabinword">cabinword</button>
+      </div>
+
+      <div id="status" class="status">Fresh words are waiting by the fire.</div>
+      <div id="best" class="best-card hidden"></div>
+      <div id="results" class="results"></div>
+    </section>
+
+    <section id="how" class="info-grid">
+      <article>
+        <h3>For word games</h3>
+        <p>Find playable words quickly and sort by score, length, or alphabetically.</p>
+      </article>
+      <article>
+        <h3>For school</h3>
+        <p>Use it to practice vocabulary, spelling, and letter patterns without a confusing interface.</p>
+      </article>
+      <article>
+        <h3>For puzzle lovers</h3>
+        <p>Try wildcards, filters, and grouped results when a puzzle gets stubborn.</p>
+      </article>
+    </section>
+
+    <section class="seo-copy">
+      <h2>What is WordCabin?</h2>
+      <p>WordCabin is a simple word finder that helps you turn scrambled letters into real words. It is built to be quick enough for games, clear enough for students, and calm enough for anyone who wants a friendly place to solve letters.</p>
+    </section>
+
+    <section id="faq" class="faq">
+      <h2>FAQ</h2>
+      <details><summary>Can I use a wildcard?</summary><p>Yes. Use a question mark, like <strong>?</strong>, to represent any letter.</p></details>
+      <details><summary>Is this only for games?</summary><p>No. It can also help with homework, vocabulary practice, spelling activities, and creative writing prompts.</p></details>
+      <details><summary>Does WordCabin save my searches?</summary><p>No. This launch version runs in your browser and does not require accounts or saved user data.</p></details>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> WordCabin. Unscramble words in a cozy little corner.</p>
+    <p class="small">WordCabin is an independent word tool and is not affiliated with Scrabble, Wordle, or Words With Friends.</p>
+  </footer>
+
+  <script src="words.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
