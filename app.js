@@ -45,7 +45,7 @@ function findWords() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("unscramble-btn");
+  const btn = document.getElementById("solveBtn");
   if (btn) {
     btn.addEventListener("click", findWords);
   }
