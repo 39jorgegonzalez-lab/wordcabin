@@ -1,7 +1,1 @@
-
-const WORDS = [
-  "apple","player","stream","master","triangle","teacher","react","javascript",
-  "wonder","planet","garden","friend","school","scramble","unscramble","letters",
-  "puzzle","finder","cozy","cabin","vocabulary","education","learning","family",
-  "children","university","research","science","history","mathematics","language"
-];
+const WORDS = ["triangle", "integral", "altering", "relating", "alerting", "master", "stream", "tamers", "garden", "listen", "silent", "teacher", "cheater", "players", "parsley", "replays", "finder", "friend", "school", "cozy", "cabin", "word", "words", "unscramble", "puzzle", "planet", "wonder", "language", "science", "history", "research", "education", "family"];
