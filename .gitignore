@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.DS_Store
+
+# Local WordCabin safety backups
+src/data/words.backup-before-generated-dictionary.js
+.vercel
+*.log
