@@ -37,7 +37,7 @@ function App() {
         <div className="inputRow"><input value={letters} onChange={e => setLetters(e.target.value)} placeholder="Try: elgnriat, rtmaes, listen, pla?er" autoFocus/><button onClick={() => setLetters(v => v.trim())}>Unscramble</button></div>
         <p className="hint">Use <strong>?</strong> as a wildcard. Results include shorter words you can build from the letters.</p>
 
-        <div className="filters"><label><span>Starts with</span><input value={filters.startsWith} onChange={e => updateFilter('startsWith', e.target.value)} placeholder="tr"/></label><label><span>Ends with</span><input value={filters.endsWith} onChange={e => updateFilter('endsWith', e.target.value)} placeholder="le"/></label><label><span>Contains</span><input value={filters.contains} onChange={e => updateFilter('contains', e.target.value)} placeholder="ang"/></label><label><span>Length</span><input value={filters.length} onChange={e => updateFilter('length', e.target.value)} placeholder="5" inputMode="numeric"/></label></div>
+        <div className="filters"><label><span>Starts with</span><input value={filters.startsWith} onChange={e => updateFilter('startsWith', e.target.value)} placeholder="optional"/></label><label><span>Ends with</span><input value={filters.endsWith} onChange={e => updateFilter('endsWith', e.target.value)} placeholder="optional"/></label><label><span>Contains</span><input value={filters.contains} onChange={e => updateFilter('contains', e.target.value)} placeholder="optional"/></label><label><span>Length</span><input value={filters.length} onChange={e => updateFilter('length', e.target.value)} placeholder="any" inputMode="numeric"/></label></div>
 
         <section className="resultsPanel" aria-live="polite">
           {!hasSearched && <EmptyState />}
@@ -56,3 +56,4 @@ function EmptyState(){ return <div className="empty"><h3>Warm up the cabin.</h3>
 function NoResults(){ return <div className="empty"><h3>No words found yet.</h3><p>Try removing a filter, adding a wildcard, or entering more letters.</p></div>; }
 
 createRoot(document.getElementById('root')).render(<App />);
+
