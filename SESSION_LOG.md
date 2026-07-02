@@ -696,3 +696,28 @@ Conclusion:
 
 WORDCABIN.com is stable in production after the rebuild, dictionary pipeline deployment, GitHub synchronization, and dictionary builder cleanup.
 
+
+---
+
+## Mobile UX production check after hero-card spacing improvements
+
+Date: 2026-07-02
+
+Latest confirmed commit:
+
+e6560cb Improve hero card slogan spacing
+
+Production visual check result:
+
+Production visual check passed.
+desktop hero spacing: yes
+mobile hero spacing: yes
+cabin works: yes
+propulsion works: yes
+visible errors: no
+site feels fast: yes
+
+Conclusion:
+
+The hero illustration spacing issue is fixed on production. The W O R D tiles and the “Warm lights. Sharp words.” slogan are readable on desktop and mobile. Solver results still work after the CSS-only update.
+
