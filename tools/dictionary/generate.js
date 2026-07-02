@@ -85,7 +85,7 @@ export async function generateDictionary(normalizedResult, qaResult, config) {
     };
 
     console.log("Generation report:");
-    console.log(JSON.stringify(generationReport, null, 2));
+    console.log("Generation completed.");
 
     return generationReport;
 }

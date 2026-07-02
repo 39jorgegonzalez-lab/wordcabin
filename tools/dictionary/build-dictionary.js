@@ -29,11 +29,11 @@ console.log(" WordCabin Dictionary Builder");
 console.log("==================================");
 console.log("");
 console.log("Status: Dictionary pipeline active.");
-console.log("Current stages: discovery, extraction, normalization, QA.");
+console.log("Current stages: discovery, extraction, normalization, QA, generation.");
 console.log("");
-console.log("Next phase:");
-console.log("- Generate final production dictionary");
-console.log("- Run build verification");
+console.log("After dictionary generation:");
+console.log("- Run production build verification");
+console.log("- Run solver tests");
 console.log("- Produce dictionary reports");
 
 // --------------------------------------------------
@@ -111,11 +111,11 @@ console.log("==============================");
 console.log(qaResult);
 
 // Pipeline Stage 5
-const generationResult = await generateDictionary(normalizedResult, qaResult, config);
+await generateDictionary(normalizedResult, qaResult, config);
 
 console.log("");
 console.log("==============================");
 console.log("Generation Result");
 console.log("==============================");
-console.log(generationResult);
+console.log("Generation completed successfully.");
 
