@@ -671,3 +671,28 @@ Solver tests pass.
 SESSION_LOG.md is committed.
 GitHub has a clear project history checkpoint.
 ```
+
+---
+
+## Final production smoke test after dictionary builder cleanup
+
+Date: 2026-07-01
+
+Latest confirmed commit:
+
+b1d8ec0 Clean dictionary builder status output
+
+Production smoke test result:
+
+Production smoke test passed.
+cabin: yes
+elgnriat: yes
+address: yes
+placeholders: optional / optional / optional / any
+visible errors: no
+site feels fast: yes
+
+Conclusion:
+
+WORDCABIN.com is stable in production after the rebuild, dictionary pipeline deployment, GitHub synchronization, and dictionary builder cleanup.
+
