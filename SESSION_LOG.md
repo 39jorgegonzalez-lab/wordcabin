@@ -721,3 +721,32 @@ Conclusion:
 
 The hero illustration spacing issue is fixed on production. The W O R D tiles and the “Warm lights. Sharp words.” slogan are readable on desktop and mobile. Solver results still work after the CSS-only update.
 
+
+---
+
+## Live production SEO source check
+
+Date: 2026-07-02
+
+Latest confirmed commit:
+
+0cb1be0 Add homepage SEO metadata
+
+Live source check result:
+
+Live source SEO check passed.
+title: yes
+description: yes
+canonical: yes
+robots: yes
+og:title: yes
+og:description: yes
+og:url: yes
+twitter:card: yes
+twitter:title: yes
+twitter:description: yes
+
+Conclusion:
+
+The homepage SEO metadata is live in production. WordCabin now has a stronger SEO foundation for search engines and social sharing previews.
+
