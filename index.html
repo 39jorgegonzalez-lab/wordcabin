@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -28,6 +28,34 @@
       name="twitter:description"
       content="Unscramble letters, find anagrams, solve word games, and discover useful words with WordCabin."
     />
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://wordcabin.com/#website",
+        "name": "WordCabin",
+        "url": "https://wordcabin.com/",
+        "description": "Use WordCabin to unscramble letters, find anagrams, solve word games, and discover words from your letters."
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://wordcabin.com/#app",
+        "name": "WordCabin",
+        "url": "https://wordcabin.com/",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web browser",
+        "description": "A browser-based word solver and word generator for unscrambling letters, finding anagrams, and discovering word game answers.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    ]
+  }
+  </script>
   </head>
   <body>
     <div id="root"></div>
