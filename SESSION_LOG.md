@@ -873,3 +873,27 @@ This is normal immediately after submission. Google may take time to process the
 Conclusion:
 
 WordCabin's sitemap has been submitted to Google Search Console. The site is now ready for URL inspection and indexing checks.
+
+---
+
+## Google Search Console URL Inspection
+
+Date: 2026-07-02
+
+Inspected URL:
+
+https://wordcabin.com/
+
+Google Search Console result:
+
+URL is on Google.
+Page indexing: Page is indexed.
+HTTPS: Page is served over HTTPS.
+
+Request indexing:
+
+Not needed right now because the homepage is already indexed.
+
+Conclusion:
+
+WordCabin homepage is indexed by Google and served over HTTPS. The core SEO discovery setup is now confirmed working.
