@@ -809,3 +809,41 @@ The local production build already contained the structured data. Live verificat
 Conclusion:
 
 WordCabin now has live structured data for the website and web application. This improves search engine understanding without adding fake ratings, fake reviews, or unsupported claims.
+
+---
+
+## Google Search Console ownership verification
+
+Date: 2026-07-02
+
+Latest confirmed commit:
+
+094b9bd Add Google Search Console verification file
+
+Verification method:
+
+HTML file
+
+Verification file:
+
+public/google65239fac48ad10de.html
+
+Live verification URL:
+
+https://wordcabin.com/google65239fac48ad10de.html
+
+Live file result:
+
+google-site-verification: google65239fac48ad10de.html
+
+Google Search Console result:
+
+Ownership verified.
+
+Important note:
+
+Do not remove the Google verification file. It must remain available on the live site to keep ownership verification active.
+
+Conclusion:
+
+WordCabin is now verified in Google Search Console and ready for sitemap submission, URL inspection, indexing checks, and search performance monitoring.
