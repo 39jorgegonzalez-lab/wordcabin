@@ -777,3 +777,35 @@ Conclusion:
 
 WordCabin now has live SEO discovery files. Search engines are allowed to crawl the site, and the sitemap points to the homepage.
 
+
+---
+
+## Live structured data check
+
+Date: 2026-07-02
+
+Latest confirmed commit:
+
+51d8ed7 Add structured data
+
+Live structured data check result:
+
+Live structured data check passed.
+JSON-LD: yes
+WebSite schema: yes
+WebApplication schema: yes
+Website ID: https://wordcabin.com/#website
+App ID: https://wordcabin.com/#app
+visible errors: no
+
+Confirmed live URL:
+
+https://wordcabin.com/
+
+Notes:
+
+The local production build already contained the structured data. Live verification required bypassing a local DNS/certificate-check issue, but the final downloaded production HTML confirmed the schema is present.
+
+Conclusion:
+
+WordCabin now has live structured data for the website and web application. This improves search engine understanding without adding fake ratings, fake reviews, or unsupported claims.
