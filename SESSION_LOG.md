@@ -847,3 +847,29 @@ Do not remove the Google verification file. It must remain available on the live
 Conclusion:
 
 WordCabin is now verified in Google Search Console and ready for sitemap submission, URL inspection, indexing checks, and search performance monitoring.
+
+---
+
+## Google Search Console sitemap submission
+
+Date: 2026-07-02
+
+Submitted sitemap:
+
+https://wordcabin.com/sitemap.xml
+
+Google Search Console result:
+
+Sitemap submitted successfully.
+
+Current discovered pages shown immediately after submission:
+
+0
+
+Notes:
+
+This is normal immediately after submission. Google may take time to process the sitemap and update discovered/indexed page counts.
+
+Conclusion:
+
+WordCabin's sitemap has been submitted to Google Search Console. The site is now ready for URL inspection and indexing checks.
