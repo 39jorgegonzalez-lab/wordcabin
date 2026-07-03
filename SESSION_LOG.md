@@ -750,3 +750,30 @@ Conclusion:
 
 The homepage SEO metadata is live in production. WordCabin now has a stronger SEO foundation for search engines and social sharing previews.
 
+
+---
+
+## Live robots and sitemap check
+
+Date: 2026-07-02
+
+Latest confirmed commit:
+
+f86f4b9 Add robots and sitemap
+
+Live robots/sitemap check result:
+
+Live robots/sitemap check passed.
+robots.txt: yes
+sitemap.xml: yes
+visible errors: no
+
+Confirmed live URLs:
+
+https://wordcabin.com/robots.txt
+https://wordcabin.com/sitemap.xml
+
+Conclusion:
+
+WordCabin now has live SEO discovery files. Search engines are allowed to crawl the site, and the sitemap points to the homepage.
+
