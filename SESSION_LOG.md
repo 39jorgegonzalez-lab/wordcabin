@@ -897,3 +897,38 @@ Not needed right now because the homepage is already indexed.
 Conclusion:
 
 WordCabin homepage is indexed by Google and served over HTTPS. The core SEO discovery setup is now confirmed working.
+
+---
+
+## Live word unscrambler landing page check
+
+Date: 2026-07-07
+
+Latest confirmed commit:
+
+f2cfcda Add word unscrambler landing page
+
+Live page URL:
+
+https://wordcabin.com/word-unscrambler/
+
+Live page check result:
+
+Word unscrambler landing page is live.
+title: yes
+meta description: yes
+canonical URL: yes
+Open Graph tags: yes
+Twitter tags: yes
+JSON-LD structured data: yes
+visible page content: yes
+internal link to solver: yes
+visible errors: no
+
+Live sitemap result:
+
+https://wordcabin.com/sitemap.xml includes https://wordcabin.com/word-unscrambler/
+
+Conclusion:
+
+WordCabin now has its first dedicated SEO growth landing page. The page is live, crawlable, included in the sitemap, and ready for Google discovery.
