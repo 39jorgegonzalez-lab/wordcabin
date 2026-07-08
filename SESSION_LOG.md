@@ -932,3 +932,34 @@ https://wordcabin.com/sitemap.xml includes https://wordcabin.com/word-unscramble
 Conclusion:
 
 WordCabin now has its first dedicated SEO growth landing page. The page is live, crawlable, included in the sitemap, and ready for Google discovery.
+
+---
+
+## Live anagram solver landing page check
+
+Date: 2026-07-07
+
+Latest confirmed commit:
+
+16181f3 Add anagram solver landing page
+
+Live page URL:
+
+https://wordcabin.com/anagram-solver/
+
+Live page check result:
+
+Anagram solver landing page is live.
+canonical URL: yes
+JSON-LD structured data: yes
+visible page content: yes
+internal link to solver: yes
+visible errors: no
+
+Live sitemap result:
+
+https://wordcabin.com/sitemap.xml includes https://wordcabin.com/anagram-solver/
+
+Conclusion:
+
+WordCabin now has a second dedicated SEO growth landing page. The anagram solver page is live, crawlable, included in the sitemap, and ready for Google discovery.
