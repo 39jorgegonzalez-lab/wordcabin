@@ -963,3 +963,50 @@ https://wordcabin.com/sitemap.xml includes https://wordcabin.com/anagram-solver/
 Conclusion:
 
 WordCabin now has a second dedicated SEO growth landing page. The anagram solver page is live, crawlable, included in the sitemap, and ready for Google discovery.
+
+---
+
+## Live Scrabble-style word finder landing page check
+
+Date: 2026-07-10
+
+Latest confirmed commit:
+
+2d34d6b Add Scrabble-style word finder landing page
+
+Production deployment:
+
+Branch: main
+Environment: Production
+Vercel status: Ready
+
+Live page URL:
+
+https://wordcabin.com/scrabble-word-finder/
+
+Live page check result:
+
+Scrabble-style word finder landing page is live.
+custom WordCabin domain: yes
+unique visible eyebrow: yes
+unique visible H1: yes
+visible page content: yes
+visible desktop layout errors: no
+visible 404 errors: no
+
+Additional production verification:
+
+https://wordcabin.com/anagram-solver/
+
+Anagram solver eyebrow correction is live.
+Anagram solver H1 correction is live.
+Old anagram solver H1 is no longer visible.
+
+Live sitemap result:
+
+https://wordcabin.com/sitemap.xml includes https://wordcabin.com/scrabble-word-finder/ exactly once.
+The homepage, word unscrambler, and anagram solver entries remain present.
+
+Conclusion:
+
+WordCabin now has a third dedicated SEO growth landing page. The Scrabble-style word finder page is live on the public domain, included in the production sitemap, and ready for search-engine discovery.
