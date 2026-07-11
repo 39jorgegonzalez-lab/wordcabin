@@ -1010,3 +1010,45 @@ The homepage, word unscrambler, and anagram solver entries remain present.
 Conclusion:
 
 WordCabin now has a third dedicated SEO growth landing page. The Scrabble-style word finder page is live on the public domain, included in the production sitemap, and ready for search-engine discovery.
+
+---
+
+## Google Search Console Scrabble-style word finder indexing request
+
+Date: 2026-07-10
+
+Inspected URL:
+
+https://wordcabin.com/scrabble-word-finder/
+
+Initial URL Inspection result:
+
+URL is not on Google.
+Reason: URL is unknown to Google.
+Last crawl: N/A
+No referring sitemap was detected yet.
+
+Live URL test result:
+
+URL is available to Google.
+Page can be indexed.
+Crawl allowed: Yes
+Page fetch: Successful
+Indexing allowed: Yes
+User-declared canonical: https://wordcabin.com/scrabble-word-finder/
+Google-selected canonical: Only determined after indexing
+Breadcrumb structured data: 1 valid item detected
+
+Indexing request result:
+
+Indexing requested successfully.
+The URL was added to Google's priority crawl queue.
+
+Important:
+
+This confirms submission and indexability, not completed indexing.
+Do not repeatedly submit the same URL because additional requests do not improve its queue position.
+
+Conclusion:
+
+Google can access and index the Scrabble-style word finder page, and the clean canonical URL has been submitted for indexing.
