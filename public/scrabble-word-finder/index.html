@@ -1,0 +1,312 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Scrabble Word Finder for Tile Games | WordCabin</title>
+    <meta
+      name="description"
+      content="Use WordCabin's Scrabble-style word finder to turn letter tiles into possible words for puzzles, practice, and tile-based word games."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#2f5d50" />
+    <link rel="canonical" href="https://wordcabin.com/scrabble-word-finder/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WordCabin" />
+    <meta property="og:title" content="Scrabble Word Finder for Tile Games | WordCabin" />
+    <meta
+      property="og:description"
+      content="Explore possible words from letter tiles for Scrabble-style and other tile-based word games."
+    />
+    <meta property="og:url" content="https://wordcabin.com/scrabble-word-finder/" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Scrabble Word Finder for Tile Games | WordCabin" />
+    <meta
+      name="twitter:description"
+      content="Find possible words from your letter tiles with WordCabin's independent word game helper."
+    />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://wordcabin.com/scrabble-word-finder/#webpage",
+          "url": "https://wordcabin.com/scrabble-word-finder/",
+          "name": "Scrabble Word Finder",
+          "description": "Use WordCabin's Scrabble-style word finder to turn letter tiles into possible words for puzzles, practice, and tile-based word games.",
+          "isPartOf": {
+            "@id": "https://wordcabin.com/#website"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://wordcabin.com/scrabble-word-finder/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "WordCabin",
+              "item": "https://wordcabin.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Scrabble Word Finder",
+              "item": "https://wordcabin.com/scrabble-word-finder/"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+      :root {
+        --cream: #f7f3ea;
+        --paper: #fffaf0;
+        --forest: #2f5d50;
+        --forest2: #24483f;
+        --amber: #e6a65d;
+        --brown: #2b2520;
+        --muted: #74695f;
+        --line: #e6dccb;
+        --soft: #ede6d8;
+        --shadow: 0 24px 60px rgba(43, 37, 32, 0.13);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top left, #fff6de, transparent 34rem), var(--cream);
+        color: var(--brown);
+        line-height: 1.65;
+      }
+
+      .page {
+        width: min(1080px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 34px 0 56px;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 54px;
+      }
+
+      .brand {
+        color: var(--forest);
+        font-weight: 900;
+        font-size: 1.45rem;
+        text-decoration: none;
+      }
+
+      .nav a {
+        color: var(--forest);
+        font-weight: 800;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 34px;
+        align-items: center;
+        margin-bottom: 34px;
+      }
+
+      .eyebrow {
+        color: var(--forest);
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.78rem;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 7vw, 5rem);
+        line-height: 0.95;
+        margin: 8px 0 18px;
+        letter-spacing: -0.06em;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: clamp(1.05rem, 2vw, 1.25rem);
+        max-width: 680px;
+      }
+
+      .card {
+        background: rgba(255, 250, 240, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 32px;
+        box-shadow: var(--shadow);
+        padding: 30px;
+      }
+
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 18px;
+        padding: 14px 20px;
+        border-radius: 999px;
+        background: var(--forest);
+        color: #fff;
+        font-weight: 900;
+        text-decoration: none;
+      }
+
+      .cta:hover {
+        background: var(--forest2);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .tile {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 22px;
+      }
+
+      h2 {
+        font-size: 2rem;
+        line-height: 1.1;
+        margin: 0 0 14px;
+      }
+
+      h3 {
+        color: var(--forest);
+        margin-top: 0;
+      }
+
+      .steps {
+        display: grid;
+        gap: 12px;
+        padding-left: 22px;
+      }
+
+      footer {
+        text-align: center;
+        color: var(--muted);
+        padding: 30px 0 0;
+      }
+
+      @media (max-width: 850px) {
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2.8rem;
+        }
+
+        .page {
+          width: min(100% - 28px, 1080px);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <nav class="nav">
+        <a class="brand" href="/">⌂ WordCabin</a>
+        <a href="/#tool">Start solving</a>
+      </nav>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Tile-based word game helper</p>
+          <h1>Find words from your letter tiles.</h1>
+          <p class="subtitle">
+            Explore possible words from a rack of letters for Scrabble-style and
+            other tile-based word games. Add filters when you need a more specific match.
+          </p>
+          <a class="cta" href="/#tool">Find words from tiles</a>
+        </div>
+
+        <aside class="card">
+          <h2>How to use the word finder</h2>
+          <ol class="steps">
+            <li>Enter the letters available on your rack.</li>
+            <li>Use ? as a wildcard for an unknown or blank tile.</li>
+            <li>Filter by length, starting letters, ending letters, or contained letters.</li>
+            <li>Review possible words and verify them against the dictionary used by your game.</li>
+          </ol>
+        </aside>
+      </section>
+
+      <section class="grid" aria-label="Tile-based word finder benefits">
+        <article class="tile">
+          <h3>Explore your rack</h3>
+          <p>
+            Turn a difficult group of letter tiles into possible word ideas without
+            testing every arrangement by hand.
+          </p>
+        </article>
+
+        <article class="tile">
+          <h3>Use pattern filters</h3>
+          <p>
+            Narrow the results when a word must begin, end, or contain particular
+            letters.
+          </p>
+        </article>
+
+        <article class="tile">
+          <h3>Compare word lengths</h3>
+          <p>
+            Review shorter and longer possibilities so you can evaluate different
+            options for your puzzle or game.
+          </p>
+        </article>
+      </section>
+
+      <section class="card" style="margin-top: 24px;">
+        <h2>A Scrabble-style word finder for tile games</h2>
+        <p>
+          WordCabin helps you explore possible words from the letters available to
+          you. It can be useful for practice, puzzle solving, vocabulary discovery,
+          and tile-based word games.
+        </p>
+        <p>
+          Word lists differ between games, editions, and regions. Treat each result
+          as a candidate and verify it against the rules and dictionary used by your game.
+        </p>
+        <p>
+          WordCabin is an independent word tool and is not affiliated with or endorsed
+          by the owners of referenced word-game trademarks.
+        </p>
+        <p>
+          Related tools:
+          <a href="/word-unscrambler/">Word Unscrambler</a>
+          ·
+          <a href="/anagram-solver/">Anagram Solver</a>
+        </p>
+        <a class="cta" href="/#tool">Try the tile word finder</a>
+      </section>
+
+      <footer>
+        WordCabin · A cozy word finder for games, school, and curious minds.
+      </footer>
+    </main>
+  </body>
+</html>
