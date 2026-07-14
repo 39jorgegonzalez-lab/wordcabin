@@ -15,6 +15,11 @@ function App() {
   const groupKeys = Object.keys(solved.grouped).sort((a,b) => Number(b) - Number(a));
 
   const updateFilter = (key, value) => setFilters(prev => ({ ...prev, [key]: value }));
+  const updateLengthFilter = (value) => {
+    if (value === '' || /^[1-9]\d*$/.test(value)) {
+      updateFilter('length', value);
+    }
+  };
   const reset = () => { setLetters(''); setFilters({ startsWith: '', endsWith: '', contains: '', length: '' }); };
   const copyWord = async (word) => { try { await navigator.clipboard.writeText(word); setCopied(word); setTimeout(() => setCopied(''), 1200); } catch {} };
 
@@ -37,7 +42,7 @@ function App() {
         <div className="inputRow"><input value={letters} onChange={e => setLetters(e.target.value)} placeholder="Try: elgnriat, rtmaes, listen, pla?er" autoFocus/><button onClick={() => setLetters(v => v.trim())}>Unscramble</button></div>
         <p className="hint">Use <strong>?</strong> as a wildcard. Results include shorter words you can build from the letters.</p>
 
-        <div className="filters"><label><span>Starts with</span><input value={filters.startsWith} onChange={e => updateFilter('startsWith', e.target.value)} placeholder="optional"/></label><label><span>Ends with</span><input value={filters.endsWith} onChange={e => updateFilter('endsWith', e.target.value)} placeholder="optional"/></label><label><span>Contains</span><input value={filters.contains} onChange={e => updateFilter('contains', e.target.value)} placeholder="optional"/></label><label><span>Length</span><input value={filters.length} onChange={e => updateFilter('length', e.target.value)} placeholder="any" inputMode="numeric"/></label></div>
+        <div className="filters"><label><span>Starts with</span><input value={filters.startsWith} onChange={e => updateFilter('startsWith', e.target.value)} placeholder="optional"/></label><label><span>Ends with</span><input value={filters.endsWith} onChange={e => updateFilter('endsWith', e.target.value)} placeholder="optional"/></label><label><span>Contains</span><input value={filters.contains} onChange={e => updateFilter('contains', e.target.value)} placeholder="optional"/></label><label><span>Length</span><input type="number" min="1" step="1" value={filters.length} onChange={e => updateLengthFilter(e.target.value)} placeholder="any" inputMode="numeric"/></label></div>
 
         <section className="resultsPanel" aria-live="polite">
           {!hasSearched && <EmptyState />}

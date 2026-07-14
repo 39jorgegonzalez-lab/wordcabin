@@ -21,15 +21,27 @@ export function letterCounts(value = '') {
   return { counts, wildcards };
 }
 
-export function canBuildWord(inputLetters, word) {
+function analyzeBuild(inputLetters, word) {
   const { counts, wildcards } = letterCounts(inputLetters);
   let remainingWildcards = wildcards;
+  let score = 0;
+
   for (const char of normalizeWord(word)) {
-    if (counts[char] > 0) counts[char] -= 1;
-    else if (remainingWildcards > 0) remainingWildcards -= 1;
-    else return false;
+    if (counts[char] > 0) {
+      counts[char] -= 1;
+      score += LETTER_SCORES[char] || 0;
+    } else if (remainingWildcards > 0) {
+      remainingWildcards -= 1;
+    } else {
+      return { canBuild: false, score: 0 };
+    }
   }
-  return true;
+
+  return { canBuild: true, score };
+}
+
+export function canBuildWord(inputLetters, word) {
+  return analyzeBuild(inputLetters, word).canBuild;
 }
 
 export function wordScore(word) {
@@ -41,11 +53,14 @@ export function passesFilters(word, filters = {}) {
   const startsWith = normalizeWord(filters.startsWith || '');
   const endsWith = normalizeWord(filters.endsWith || '');
   const contains = normalizeWord(filters.contains || '');
-  const length = String(filters.length || '').trim();
+  const length = String(filters.length ?? '').trim();
   if (startsWith && !clean.startsWith(startsWith)) return false;
   if (endsWith && !clean.endsWith(endsWith)) return false;
   if (contains && !clean.includes(contains)) return false;
-  if (length && Number(length) > 0 && clean.length !== Number(length)) return false;
+  if (length) {
+    if (!/^[1-9]\d*$/.test(length)) return false;
+    if (clean.length !== Number(length)) return false;
+  }
   return true;
 }
 
@@ -60,13 +75,14 @@ export function solveWords({ letters, dictionary, filters = {}, minLength = 2, l
     const word = entry.w;
     if (!word || word.length < minLength || word.length > cleanLetters.length) continue;
     if (!passesFilters(word, filters)) continue;
-    if (!canBuildWord(cleanLetters, word)) continue;
+    const build = analyzeBuild(cleanLetters, word);
+    if (!build.canBuild) continue;
     candidates.push({
       word,
       length: word.length,
-      score: wordScore(word),
+      score: build.score,
       common: Boolean(entry.common),
-      exact: word.length === cleanLetters.replace(/\?/g, '').length
+      exact: word.length === cleanLetters.length
     });
   }
 
