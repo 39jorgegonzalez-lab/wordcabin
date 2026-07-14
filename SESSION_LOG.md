@@ -1052,3 +1052,23 @@ Do not repeatedly submit the same URL because additional requests do not improve
 Conclusion:
 
 Google can access and index the Scrabble-style word finder page, and the clean canonical URL has been submitted for indexing.
+
+## Google Search Console Scrabble-style word finder status recheck - 2026-07-13
+
+- Inspected URL: https://wordcabin.com/scrabble-word-finder/
+- Result: URL is not on Google.
+- Page indexing status: Crawled - currently not indexed.
+- Last crawl: Jul 10, 2026, 11:11:57 PM.
+- Crawled as: Googlebot smartphone.
+- Crawl allowed: Yes.
+- Page fetch: Successful.
+- Indexing allowed: Yes.
+- User-declared canonical: https://wordcabin.com/scrabble-word-finder/
+- Google-selected canonical: Inspected URL.
+- Referring sitemap: No referring sitemaps detected.
+- Referring page: None detected.
+- Live sitemap check: 4 URLs present, including the inspected URL.
+- Search Console sitemap report before refresh: processed successfully, last read 7/10/26, 3 discovered pages, 0 discovered videos.
+- Sitemap refresh submitted once and accepted successfully.
+- No additional URL indexing request was made.
+- This does not mean the page is indexed.
