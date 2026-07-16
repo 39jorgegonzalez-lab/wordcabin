@@ -122,4 +122,84 @@ assertEqual(
   'generic wordScore should retain full letter values',
 );
 
+
+const lengthPrioritySolved = solveWords({
+  letters: 'train',
+  dictionary: [
+    { w: 'rain', common: true },
+    { w: 'train', common: false },
+  ],
+});
+
+assertEqual(
+  lengthPrioritySolved.results[0]?.word,
+  'train',
+  'longer words should rank before shorter common words',
+);
+
+const scorePrioritySolved = solveWords({
+  letters: 'zape',
+  dictionary: [
+    { w: 'ape', common: true },
+    { w: 'zap', common: false },
+  ],
+});
+
+assertEqual(
+  scorePrioritySolved.results[0]?.word,
+  'zap',
+  'higher tile score should rank before common status at equal length',
+);
+
+const commonTieBreakSolved = solveWords({
+  letters: 'act',
+  dictionary: [
+    { w: 'act', common: false },
+    { w: 'cat', common: true },
+  ],
+});
+
+assertEqual(
+  commonTieBreakSolved.results[0]?.word,
+  'cat',
+  'common status should break equal-length equal-score ties',
+);
+
+const alphabeticalTieBreakSolved = solveWords({
+  letters: 'act',
+  dictionary: [
+    { w: 'cat', common: false },
+    { w: 'act', common: false },
+  ],
+});
+
+assertEqual(
+  alphabeticalTieBreakSolved.results[0]?.word,
+  'act',
+  'alphabetical order should break complete ranking ties',
+);
+
+assert(
+  Array.isArray(scorePrioritySolved.results),
+  'solveWords should continue returning a results array',
+);
+
+assert(
+  scorePrioritySolved.grouped &&
+    typeof scorePrioritySolved.grouped === 'object',
+  'solveWords should continue returning grouped results',
+);
+
+assertEqual(
+  scorePrioritySolved.best,
+  scorePrioritySolved.results[0],
+  'best should reference the first ranked result',
+);
+
+assertEqual(
+  scorePrioritySolved.meta.returned,
+  scorePrioritySolved.results.length,
+  'meta.returned should match the returned result count',
+);
+
 console.log('All WordCabin solver tests passed.');

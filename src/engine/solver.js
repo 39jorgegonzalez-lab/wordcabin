@@ -88,8 +88,8 @@ export function solveWords({ letters, dictionary, filters = {}, minLength = 2, l
 
   candidates.sort((a, b) =>
     b.length - a.length ||
-    Number(b.common) - Number(a.common) ||
     b.score - a.score ||
+    Number(b.common) - Number(a.common) ||
     a.word.localeCompare(b.word)
   );
 
