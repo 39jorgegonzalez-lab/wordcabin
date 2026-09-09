@@ -3,7 +3,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node src/engine/solver.test.js"
+    "test": "node src/engine/solver.test.js && node tools/dictionary/source-contract.test.js && node tools/dictionary/source-eligibility.test.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

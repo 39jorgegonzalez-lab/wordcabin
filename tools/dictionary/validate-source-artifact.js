@@ -58,18 +58,32 @@ export async function validateSourceArtifact({
         });
     }
 
-    if (manifest.status !== "approved") {
-        return failure({
-            manifest,
-            artifactId,
-            stage: "governance",
-            reasonCode: "FAIL_SOURCE_NOT_APPROVED",
-        });
-    }
 
     const artifact = manifest.artifacts.find(
         (entry) => entry.artifactId === artifactId
     );
+
+    if (
+        artifact &&
+        (
+            !Number.isSafeInteger(artifact.sizeBytes) ||
+            artifact.sizeBytes <= 0 ||
+            typeof artifact.sha256 !== "string" ||
+            !/^[a-f0-9]{64}$/i.test(artifact.sha256)
+        )
+    ) {
+        return failure({
+            manifest,
+            artifactId,
+            stage: "artifact-integrity",
+            reasonCode:
+                "FAIL_ARTIFACT_INTEGRITY_METADATA_INCOMPLETE",
+            expectedSizeBytes:
+                artifact.sizeBytes ?? null,
+            expectedSha256:
+                artifact.sha256 ?? null,
+        });
+    }
 
     if (!artifact) {
         return failure({

@@ -237,27 +237,55 @@ try {
 
     console.log("PASS: missing artifact rejected");
 
-    const suspendedManifest = createManifest({
-        status: "suspended",
+    const candidateManifest = createManifest({
+        status: "candidate",
         sizeBytes: goodContent.length,
         sha256Value: sha256(goodContent),
     });
 
-    const suspendedResult = await validateSourceArtifact({
-        manifest: suspendedManifest,
+    const candidateResult = await validateSourceArtifact({
+        manifest: candidateManifest,
         artifactId: "primary",
         resolvedPath: goodPath,
     });
 
+    assert.equal(candidateResult.status, "passed");
     assert.equal(
-        suspendedResult.reasonCode,
-        "FAIL_SOURCE_NOT_APPROVED"
+        candidateResult.artifactIntegrityPassed,
+        true
     );
 
-    assert.equal(suspendedResult.parsingAttempted, false);
+    assert.equal(candidateResult.parsingAttempted, false);
 
     console.log(
-        "PASS: suspended source rejected before artifact parsing"
+        "PASS: candidate artifact can be integrity-verified without being authorized"
+    );
+
+    const incompleteCandidateManifest = createManifest({
+        status: "candidate",
+        sizeBytes: null,
+        sha256Value: null,
+    });
+
+    const incompleteCandidateResult =
+        await validateSourceArtifact({
+            manifest: incompleteCandidateManifest,
+            artifactId: "primary",
+            resolvedPath: goodPath,
+        });
+
+    assert.equal(
+        incompleteCandidateResult.reasonCode,
+        "FAIL_ARTIFACT_INTEGRITY_METADATA_INCOMPLETE"
+    );
+
+    assert.equal(
+        incompleteCandidateResult.artifactIntegrityPassed,
+        false
+    );
+
+    console.log(
+        "PASS: candidate without pinned size/hash cannot pass integrity"
     );
 
     const badPathManifest = structuredClone(manifest);
