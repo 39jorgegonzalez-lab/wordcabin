@@ -1,0 +1,66 @@
+{
+  "manifestVersion": 1,
+  "sourceId": "candidate-pipeline-fixture",
+  "sourceName": "Candidate Pipeline Test Fixture",
+  "sourceVersion": "1.0.0",
+  "status": "candidate",
+
+  "roles": [
+    "lexical"
+  ],
+
+  "evidenceCapabilities": [
+    "lexical-existence"
+  ],
+
+  "claimAuthority": [
+    "lexical-validity"
+  ],
+
+  "acquisition": {
+    "mode": "manual-download",
+    "documentedProcedure": "test-fixtures/candidate-pipeline",
+    "credentialReference": null
+  },
+
+  "artifacts": [
+    {
+      "artifactId": "primary",
+      "fileName": "source.txt",
+      "required": true,
+      "sha256": "97EEAED7670E02C4255F5A6CB75441D4EA1CD6560C04E6E1FEC2F641B4F256E2",
+"sizeBytes": 23
+    }
+  ],
+
+  "license": {
+    "status": "verified",
+    "identifier": "TEST-FIXTURE",
+    "reference": "test-fixtures/candidate-license",
+    "commercialUse": "allowed",
+    "transformation": "allowed",
+    "rawRedistribution": "prohibited",
+    "derivedRedistribution": "allowed",
+    "attribution": "not-required",
+    "licenseNotice": "not-required",
+    "conditions": [],
+    "reviewedAt": "2026-09-09",
+    "reviewReferences": [
+      "test-fixtures/candidate-license-review"
+    ]
+  },
+
+  "permittedUses": [
+    "internal-analysis"
+  ],
+
+  "profiles": [
+    "general-anagram"
+  ],
+
+  "transformation": {
+    "pipelineId": "candidate-pipeline-fixture",
+    "pipelineVersion": 1,
+    "parameters": {}
+  }
+}
