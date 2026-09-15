@@ -276,6 +276,7 @@ try {
         "extraction.json",
         "normalization.json",
         "candidate-qa.json",
+        "candidate-evaluation.json",
         "build-summary.json",
     ];
 
@@ -383,6 +384,17 @@ console.log(
     assert.equal(
         summary.candidateWordCount,
         5
+    );
+
+    assert.equal(
+        summary.promotionStatus,
+        "not-evaluated-for-promotion"
+    );
+
+    assert.equal(
+        readJson(path.join(result.reportDirectory, "candidate-evaluation.json"))
+            .productionMutationAllowed,
+        false
     );
 
     console.log(

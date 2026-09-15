@@ -19,5 +19,9 @@ Upload all files to the existing GitHub `wordcabin` repository, replacing the cu
 
 ## Monthly maintenance approach
 1. Review analytics and search behavior.
-2. Add missing legitimate words to `src/data/words.js`.
+2. Evaluate missing legitimate words through the candidate-source pipeline; never edit `src/data/words.js` manually.
 3. Avoid weekly redesigns. Keep monthly iterations small and measured.
+
+## Verification
+
+Run `npm test`, `npm run build`, and `npm audit --omit=dev` before requesting a deployment. Production deployment requires separate owner authorization.

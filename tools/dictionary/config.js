@@ -4,6 +4,7 @@
 import path from "path";
 
 const dictionarySources = path.resolve(
+    process.env.WORDCABIN_DICTIONARY_SOURCES ||
     "E:/TODO TRABAJO/Z. WEBSITES/5. WORDCABIN/DICTIONARY_SOURCES"
 );
 

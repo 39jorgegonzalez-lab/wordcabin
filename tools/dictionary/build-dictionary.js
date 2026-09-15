@@ -6,6 +6,9 @@ import { extractWords } from "./extract.js";
 import { normalizeWords } from "./normalize.js";
 import { runQA } from "./qa.js";
 import { generateDictionary } from "./generate.js";
+import { assertProductionWriteAuthorized } from "./production-write-guard.js";
+
+assertProductionWriteAuthorized();
 
 /*
 WordCabin Dictionary Builder
@@ -118,4 +121,3 @@ console.log("==============================");
 console.log("Generation Result");
 console.log("==============================");
 console.log("Generation completed successfully.");
-

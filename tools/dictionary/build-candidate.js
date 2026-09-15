@@ -9,6 +9,8 @@ import { evaluateSourceEligibility } from "./source-eligibility.js";
 import { validateSourceArtifact } from "./validate-source-artifact.js";
 import { extractSourceFile } from "./extract-source-file.js";
 import { runCandidateStructuralQA } from "./candidate-qa.js";
+import { evaluateCandidateWords } from "./candidate-evaluation.js";
+import { WORDS as PRODUCTION_WORDS } from "../../src/data/words.js";
 
 const DICTIONARY_TOOLS_DIRECTORY = path.dirname(
     fileURLToPath(import.meta.url)
@@ -624,8 +626,15 @@ if (
         );
     }
 
+    // Stage 7: candidate evaluation against the immutable production baseline.
+    // This is analysis only; promotion remains a separate, owner-reviewed process.
+    const evaluationResult = evaluateCandidateWords({
+        candidateWords: normalizedResult.words,
+        productionWords: PRODUCTION_WORDS,
+    });
+
     // ---------------------------------------------------------
-    // Stage 7: candidate-only output
+    // Stage 8: candidate-only output
     //
     // Nothing above this point writes any build artifact.
     // Nothing in this module imports or calls generateDictionary().
@@ -705,6 +714,11 @@ if (
             "candidate-qa.json"
         );
 
+        const evaluationReportPath = path.join(
+            reportBuildDirectory,
+            "candidate-evaluation.json"
+        );
+
         const summaryReportPath = path.join(
             reportBuildDirectory,
             "build-summary.json"
@@ -752,6 +766,11 @@ if (
             qaResult
         );
 
+        writeJson(
+            evaluationReportPath,
+            evaluationResult
+        );
+
         const summary = {
             buildId,
             sourceId: manifest.sourceId,
@@ -769,6 +788,12 @@ if (
                 manifest.transformation,
             candidateWordCount:
                 normalizedResult.words.length,
+            novelWordCount:
+                evaluationResult.novelWordCount,
+            outsideProfileWordCount:
+                evaluationResult.outsideProfileWordCount,
+            promotionStatus:
+                evaluationResult.promotionStatus,
             candidateArtifact:
                 "candidate-words.txt",
             reports: [
@@ -777,6 +802,7 @@ if (
                 "extraction.json",
                 "normalization.json",
                 "candidate-qa.json",
+                "candidate-evaluation.json",
                 "build-summary.json",
             ],
         };

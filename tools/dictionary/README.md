@@ -20,11 +20,13 @@ It is generated automatically from vetted sources.
 ## Planned Sources
 
 ### SCOWL
+
 - Primary vocabulary backbone
 - Clean English word lists
 - Size target: 70–80
 
 ### wordfreq
+
 - Frequency ranking
 - Identifies common words
 - Allows prioritization of useful vocabulary
@@ -55,11 +57,11 @@ It is generated automatically from vetted sources.
 Example:
 
 {
-    w: "triangle",
-    common: true,
-    length: 8,
-    score: 9,
-    rank: 14822
+w: "triangle",
+common: true,
+length: 8,
+score: 9,
+rank: 14822
 }
 
 ## Generation Process
@@ -78,6 +80,7 @@ Example:
 Expected words should include examples such as:
 
 Input: triangle
+
 - triangle
 - integral
 - altering
@@ -88,9 +91,16 @@ Input: triangle
 - tailer
 
 Additional tests:
+
 - listen
 - silent
 - education
 - mortgage
 - calculator
 - cabinet
+
+## Candidate Source Evaluation v1
+
+Candidate artifacts use a separate manifest-bound pipeline that performs integrity, eligibility, extraction, normalization, structural QA, and production-overlap evaluation. It writes only to `output/candidates` and `reports/candidates`; it cannot promote data into `src/data/words.js`.
+
+See `docs/specs/CANDIDATE_SOURCE_EVALUATION_V1.md` for the contract and CLI usage.

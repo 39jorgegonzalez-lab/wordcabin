@@ -1,9 +1,15 @@
 {
+  "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node src/engine/solver.test.js && node tools/dictionary/source-contract.test.js && node tools/dictionary/source-eligibility.test.js && node tools/dictionary/candidate-qa.test.js && node tools/dictionary/build-candidate.test.js"
+    "test": "node src/engine/solver.test.js && node tools/dictionary/source-contract.test.js && node tools/dictionary/source-eligibility.test.js && node tools/dictionary/candidate-qa.test.js && node tools/dictionary/candidate-evaluation.test.js && node tools/dictionary/build-candidate.test.js && node tools/dictionary/production-write-guard.test.js && node tools/site/site-foundations.test.js",
+    "test:solver": "node src/engine/solver.test.js",
+    "test:dictionary": "node tools/dictionary/source-contract.test.js && node tools/dictionary/source-eligibility.test.js && node tools/dictionary/candidate-qa.test.js && node tools/dictionary/candidate-evaluation.test.js && node tools/dictionary/build-candidate.test.js && node tools/dictionary/production-write-guard.test.js",
+    "test:site": "node tools/site/site-foundations.test.js",
+    "candidate:build": "node tools/dictionary/build-candidate-cli.js",
+    "dictionary:build": "node tools/dictionary/build-dictionary.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
