@@ -4,6 +4,12 @@ import { createRoot } from "react-dom/client";
 const DAILY_ROUTE_PREFIX = "/daily-word-challenge";
 
 async function loadApplication(pathname = window.location.pathname) {
+  const toolMode = pathname.replace(/\/$/, "") === "/anagram-solver" ? "anagram"
+    : pathname.replace(/\/$/, "") === "/scrabble-word-finder" ? "tile-game" : null;
+  if (toolMode) {
+    const { WordSolver } = await import("./solver/WordSolver.jsx");
+    return <WordSolver mode={toolMode} />;
+  }
   if (
     pathname === DAILY_ROUTE_PREFIX ||
     pathname.startsWith(`${DAILY_ROUTE_PREFIX}/`)
@@ -18,7 +24,7 @@ async function loadApplication(pathname = window.location.pathname) {
   return <SolverApp />;
 }
 
-const root = createRoot(document.getElementById("root"));
+const root = createRoot(document.getElementById("tool-root") || document.getElementById("root"));
 
 loadApplication()
   .then((application) => root.render(application))

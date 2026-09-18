@@ -66,9 +66,11 @@ assert.equal(fs.existsSync(manifestPath), true, "Vite manifest is required for a
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const dailyEntry = Object.values(manifest).find((entry) => entry.src === "src/daily/DailyChallengeApp.jsx");
 const solverEntry = Object.values(manifest).find((entry) => entry.src === "src/solver/SolverApp.jsx");
+const sharedToolEntry = Object.values(manifest).find((entry) => entry.src === "src/solver/WordSolver.jsx");
 assert.ok(dailyEntry, "daily chunk must be present in Vite manifest");
 assert.ok(solverEntry, "solver chunk must be present in Vite manifest");
-const dictionaryFile = solverEntry.file;
+assert.ok(sharedToolEntry, "shared tool chunk must exist");
+const dictionaryFile = sharedToolEntry.file;
 assert.notEqual(dailyEntry.file, dictionaryFile);
 const collectStaticImports = (entry, found = new Set()) => {
   for (const key of entry.imports ?? []) {
@@ -79,11 +81,29 @@ const collectStaticImports = (entry, found = new Set()) => {
   return found;
 };
 const dailyStaticImports = collectStaticImports(dailyEntry);
+assert.equal(dailyStaticImports.has("src/solver/WordSolver.jsx"), false);
+assert.equal(dailyStaticImports.has(sharedToolEntry.file), false);
 assert.equal(dailyStaticImports.has("src/solver/SolverApp.jsx"), false);
 assert.equal(dailyStaticImports.has(solverEntry.file), false);
 assert.equal(archive.includes(dictionaryFile), false, "archive HTML must not eagerly reference the solver/dictionary chunk");
 const dictionaryChunk = fs.readFileSync(path.join(dist, dictionaryFile), "utf8");
-assert.match(dictionaryChunk, /zymurgy/, "solver chunk should contain the production dictionary marker");
+assert.match(dictionaryChunk, /zymurgy/, "shared solver chunk should contain the production dictionary marker");
+const dictionaryChunks = Object.values(manifest).filter(entry => entry.file.endsWith(".js") && read(entry.file).includes("zymurgy"));
+assert.equal(dictionaryChunks.length, 1, "dictionary must appear in exactly one emitted chunk");
+assert.ok(collectStaticImports(solverEntry).has("src/solver/WordSolver.jsx"), "homepage must reuse the shared tool chunk");
+for (const route of ["anagram-solver", "scrabble-word-finder"]) {
+  const html = read(`${route}/index.html`);
+  assert.match(html, /id="tool-root" data-tool-mode="(?:anagram|tile-game)"/);
+  assert.ok(html.includes(`src="/${manifest["index.html"].file}"`), "tool page must use current bootstrap");
+  assert.ok(html.includes(`href="https://wordcabin.com/${route}/"`));
+  assert.match(html, /content="index, follow"/);
+  assert.ok(html.indexOf('id="tool-root"') < html.indexOf('<ol class="steps">'), "tool must precede guide");
+  assert.match(html, /Related tools:/);
+  assert.match(html, /href="#tool"/);
+  assert.equal((html.match(/<h1>/g) || []).length, 1);
+  assert.ok(read(manifest["index.html"].file).includes(sharedToolEntry.file.split("/").at(-1)), "bootstrap loads shared tool entry");
+}
+console.log("PASS: tool mounts, current assets, preserved SEO/guides/navigation and one shared dictionary chunk");
 assert.doesNotMatch(
   fs.readFileSync(path.join(dist, dailyEntry.file), "utf8"),
   /zymurgy/,

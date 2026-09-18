@@ -1,0 +1,173 @@
+.wordSolver.toolShell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto 36px;
+  background: rgba(255, 250, 240, 0.84);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 34px;
+  box-shadow: var(--shadow);
+  padding: clamp(18px, 4vw, 36px);
+}
+.wordSolver .toolHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+.wordSolver .ghost {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--forest);
+  padding: 11px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.wordSolver .inputRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.wordSolver .inputRow input,
+.wordSolver .filters input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: white;
+  color: var(--brown);
+  font-size: 1.1rem;
+  padding: 17px 18px;
+  outline: none;
+}
+.wordSolver .inputRow input:focus,
+.wordSolver .filters input:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 4px rgba(230, 166, 93, 0.18);
+}
+.wordSolver .hint {
+  color: var(--muted);
+  margin: 12px 2px 22px;
+}
+.wordSolver .filters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.wordSolver .filters label span {
+  display: block;
+  font-weight: 900;
+  color: var(--forest);
+  font-size: 0.8rem;
+  margin: 0 0 6px 4px;
+}
+.wordSolver .resultsPanel {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+.wordSolver .summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.wordSolver .summary div {
+  background: var(--soft);
+  border-radius: 24px;
+  padding: 18px;
+  border: 1px solid var(--line);
+}
+.wordSolver .summary p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-weight: 800;
+}
+.wordSolver .summary strong {
+  display: block;
+  font-size: 2rem;
+  color: var(--forest);
+}
+.wordSolver .summary span {
+  color: var(--muted);
+  font-weight: 700;
+}
+.wordSolver .group {
+  margin-top: 24px;
+}
+.wordSolver .group h3 {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+}
+.wordSolver .wordGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.wordSolver .wordPill {
+  position: relative;
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 999px;
+  padding: 11px 12px 11px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(43, 37, 32, 0.06);
+}
+.wordSolver .wordPill span {
+  font-weight: 900;
+}
+.wordSolver .wordPill small {
+  background: #f1eadc;
+  color: var(--forest);
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-weight: 900;
+}
+.wordSolver .wordPill em {
+  position: absolute;
+  top: -24px;
+  right: 4px;
+  background: var(--forest);
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-style: normal;
+  font-size: 0.72rem;
+}
+.wordSolver .empty {
+  text-align: center;
+  padding: 42px 12px;
+  color: var(--muted);
+}
+.wordSolver .empty h3 {
+  color: var(--forest);
+  font-size: 1.7rem;
+  margin: 0 0 8px;
+}
+
+.wordSolver h2 { font-size: clamp(1.5rem, 3vw, 2.6rem); margin: 4px 0 0; letter-spacing: -.04em; }
+.wordSolver .eyebrow { display: inline-flex; gap: 8px; align-items: center; color: var(--forest); font-size: .78rem; font-weight: 900; text-transform: uppercase; }
+.wordSolver input { min-width: 0; }
+.wordSolver button { min-height: 44px; }
+.wordSolver button:focus-visible, .wordSolver a:focus-visible { outline: 3px solid var(--forest); outline-offset: 3px; }
+.wordSolver .wordPill, .wordSolver .summary strong { max-width: 100%; overflow-wrap: anywhere; }
+.wordSolver .wordPill span { min-width: 0; }
+.wordSolver .ghost { flex-shrink: 0; }
+.wordSolver .solverAnnouncement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.wordSolver a { color: var(--forest); }
+.wordSolver.mode-anagram .filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 850px) {
+  .wordSolver .summary { grid-template-columns: 1fr; }
+  .wordSolver .filters, .wordSolver.mode-anagram .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .wordSolver .filters, .wordSolver.mode-anagram .filters { grid-template-columns: 1fr; }
+  .wordSolver.toolShell { width: calc(100% - 20px); border-radius: 24px; }
+}
+#tool-root .wordSolver { width: 100%; line-height: 1.4; }
