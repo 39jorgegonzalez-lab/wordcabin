@@ -6,7 +6,11 @@ const root = path.resolve(import.meta.dirname, "..", "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const sitemap = read("public/sitemap.xml");
 const robots = read("public/robots.txt");
-const main = read("src/main.jsx");
+const main = [
+  read("src/main.jsx"),
+  read("src/solver/SolverApp.jsx"),
+  read("src/daily/DailyPromo.jsx"),
+].join("\n");
 
 const requiredUrls = [
   "https://wordcabin.com/",
@@ -15,6 +19,7 @@ const requiredUrls = [
   "https://wordcabin.com/scrabble-word-finder/",
   "https://wordcabin.com/privacy/",
   "https://wordcabin.com/advertising/",
+  "https://wordcabin.com/daily-word-challenge/",
 ];
 
 for (const url of requiredUrls) {
@@ -32,6 +37,7 @@ for (const route of [
   "scrabble-word-finder",
   "privacy",
   "advertising",
+  "daily-word-challenge",
 ]) {
   assert.match(
     main,
@@ -39,6 +45,16 @@ for (const route of [
     `homepage must link to /${route}/`,
   );
 }
+assert.equal(
+  /<loc>https:\/\/wordcabin\.com\/daily-word-challenge\/\d{4}-\d{2}-\d{2}\/<\/loc>/.test(sitemap),
+  false,
+  "dated challenge pages must stay out of the sitemap",
+);
+const privacy = read("public/privacy/index.html");
+assert.match(privacy, /stored locally in\s+your browser on this device/);
+assert.match(privacy, /does not create an account/);
+assert.match(privacy, /synchronize progress with a server/);
+assert.match(privacy, /Clearing\s+browser storage clears this local progress/);
 for (const page of [
   "public/privacy/index.html",
   "public/advertising/index.html",
