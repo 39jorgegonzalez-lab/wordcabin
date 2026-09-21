@@ -144,7 +144,7 @@ function ChallengeView({ challenge, published, progress, setProgress }) {
         setProgress(updated);
         writeDailyProgress(updated);
       }
-      emitDailyEvent("daily_challenge_complete", {
+      if (updated !== progress) emitDailyEvent("daily_challenge_complete", {
         challengeId: challenge.id,
         challengeDate: challenge.date,
         attemptNumber: next.attempts.length,

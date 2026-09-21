@@ -113,7 +113,7 @@ const fileForManifestKey = (key) => manifest[key]?.file;
 const dailyFiles = new Set([
   manifest["index.html"].file,
   dailyEntry.file,
-  ...(dailyEntry.imports ?? []).map(fileForManifestKey).filter(Boolean),
+  ...[...collectStaticImports(dailyEntry)].map(fileForManifestKey).filter(Boolean),
 ]);
 const gzipBytes = (relative) => zlib.gzipSync(fs.readFileSync(path.join(dist, relative))).length;
 const dailyJavaScriptGzip = [...dailyFiles].reduce((total, file) => total + gzipBytes(file), 0);
@@ -122,3 +122,16 @@ console.log(
   `PASS: daily asset graph is isolated from ${dictionaryFile}; eager daily JavaScript is ${dailyJavaScriptGzip} gzip bytes`,
 );
 console.log("=== ROUTE_VALIDATION_TESTS_COMPLETE ===");
+
+const analyticsEntry = manifest["src/analytics/bootstrap.js"];
+assert.ok(analyticsEntry, "analytics must have a standalone entry for static pages");
+assert.equal(collectStaticImports(analyticsEntry).size, 0, "static analytics must not load React or the dictionary");
+assert.doesNotMatch(read(analyticsEntry.file), /zymurgy|plausible\.io/);
+assert.ok(collectStaticImports(manifest["index.html"]).has("src/analytics/bootstrap.js"));
+for (const route of ["privacy", "advertising", "word-unscrambler"]) {
+  const html = read(`${route}/index.html`);
+  assert.equal(html.split(`src="/${analyticsEntry.file}"`).length - 1, 1);
+  assert.equal(html.includes(dictionaryFile), false);
+  for (const css of analyticsEntry.css || []) assert.ok(html.includes(`href="/${css}"`));
+}
+console.log("PASS: one lightweight current analytics entry on static pages; all app routes share the adapter");

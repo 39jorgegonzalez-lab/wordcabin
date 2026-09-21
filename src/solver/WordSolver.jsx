@@ -1,4 +1,5 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createToolEngagement } from "../analytics/events.js";
 import { Search, RefreshCcw } from "lucide-react";
 import { WORDS } from "../data/words.js";
 import { solveTool, TOOL_MODES } from "./tool-modes.js";
@@ -28,6 +29,10 @@ export function WordSolver({ mode = "unscrambler", autoFocus = false }) {
     [letters, filters, mode],
   );
   const hasSearched = letters.trim().length > 0;
+  const engagement = useMemo(() => createToolEngagement(mode), [mode]);
+  useEffect(() => {
+    engagement(/^[a-z?\s]+$/i.test(letters) && solved.results.length > 0);
+  }, [engagement, letters, solved]);
   const groupKeys = Object.keys(solved.grouped).sort(
     (a, b) => Number(b) - Number(a),
   );

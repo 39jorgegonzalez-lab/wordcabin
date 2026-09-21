@@ -23,5 +23,8 @@ export default defineConfig({
   plugins: [toolPages],
   build: {
     manifest: true,
+    rolldownOptions: {
+      input: { index: "index.html", analytics: "src/analytics/bootstrap.js" },
+    },
   },
 });

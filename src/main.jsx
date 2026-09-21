@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import "./analytics/bootstrap.js";
 
 const DAILY_ROUTE_PREFIX = "/daily-word-challenge";
 

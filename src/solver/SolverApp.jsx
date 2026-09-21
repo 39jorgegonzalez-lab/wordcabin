@@ -6,7 +6,6 @@ import {
   BookOpen,
 } from "lucide-react";
 import { WordSolver } from "./WordSolver.jsx";
-import { Analytics } from "../monetization/Analytics.jsx";
 import { AdSlot } from "../monetization/AdSlot.jsx";
 import { DailyPromo } from "../daily/DailyPromo.jsx";
 import "../styles.css";
@@ -14,7 +13,6 @@ import "../styles.css";
 export function SolverApp() {
   return (
     <main>
-      <Analytics />
       <section className="hero">
         <nav className="nav">
           <div className="brand">

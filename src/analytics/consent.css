@@ -1,0 +1,11 @@
+.analyticsConsent { box-sizing: border-box; width: 100%; padding: 14px max(16px, calc((100% - 1100px) / 2)); background: #f0f5f2; color: #172c25; font: 15px/1.5 system-ui, sans-serif; border-bottom: 1px solid #b8c9bf; }
+.analyticsConsent[hidden] { display: none; }
+.analyticsConsent h2 { font-size: 17px; margin: 0 0 4px; }
+.analyticsConsent p { margin: 4px 0; }
+.analyticsConsent a { color: #164f37; text-decoration: underline; }
+.analyticsChoices { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.analyticsChoices button, .analyticsFooter button { min-height: 44px; padding: 10px 16px; border: 1px solid #567363; border-radius: 6px; background: white; color: #172c25; font: 600 14px/1.4 system-ui, sans-serif; cursor: pointer; }
+.analyticsChoices button { flex: 1 1 140px; max-width: 220px; }
+.analyticsFooter { padding: 16px; text-align: center; }
+.analyticsFooter button { background: transparent; text-decoration: underline; }
+.analyticsConsent :focus-visible, .analyticsFooter :focus-visible { outline: 3px solid #176eaa; outline-offset: 3px; }

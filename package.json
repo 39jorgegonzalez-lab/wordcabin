@@ -2,9 +2,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "node tools/daily/validate-challenges.js && vite build && node tools/daily/generate-pages.js && node tools/site/generate-tool-pages.js",
+    "build": "node tools/daily/validate-challenges.js && vite build && node tools/daily/generate-pages.js && node tools/site/generate-tool-pages.js && node tools/site/generate-analytics-pages.js",
     "preview": "vite preview",
-    "test": "npm run test:existing && npm run test:daily && npm run test:tools",
+    "test": "npm run test:existing && npm run test:daily && npm run test:tools && npm run test:analytics",
     "test:existing": "node src/engine/solver.test.js && node tools/dictionary/source-contract.test.js && node tools/dictionary/source-eligibility.test.js && node tools/dictionary/candidate-qa.test.js && node tools/dictionary/candidate-evaluation.test.js && node tools/dictionary/build-candidate.test.js && node tools/dictionary/production-write-guard.test.js && node tools/site/site-foundations.test.js",
     "test:daily": "node src/daily/challenge-model.test.js && node src/daily/game-reducer.test.js && node src/daily/storage.test.js && node src/daily/analytics.test.js && node tools/daily/daily-pages.test.js",
     "test:routes": "node tools/site/route-validation.test.js",
@@ -15,7 +15,8 @@
     "test:site": "node tools/site/site-foundations.test.js",
     "candidate:build": "node tools/dictionary/build-candidate-cli.js",
     "dictionary:build": "node tools/dictionary/build-dictionary.js",
-    "test:tools": "node src/solver/tool-modes.test.js && node tools/site/tool-ui.test.js"
+    "test:tools": "node src/solver/tool-modes.test.js && node tools/site/tool-ui.test.js",
+    "test:analytics": "node --test src/analytics/analytics.test.js && node src/analytics/analytics-ui.test.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

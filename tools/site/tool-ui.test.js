@@ -23,13 +23,18 @@ try {
     input.dispatchEvent(new dom.window.Event("input",{bubbles:true}));
   });
   const resultWords = () => [...document.querySelectorAll(".wordPill span")].map(el=>el.textContent);
+  const analytics = [];
+  dom.window.addEventListener("wordcabin:analytics", event => analytics.push(event.detail));
   for (const mode of ["unscrambler", "anagram", "tile-game"]) {
+    const eventsBefore = analytics.length;
     await React.act(async()=>root.render(React.createElement(WordSolver,{mode,key:mode})));
     const input=document.querySelector(".inputRow input");
     assert.ok(input.getAttribute("aria-label"));
     assert.equal(document.querySelectorAll(".inputRow button").length,0);
     assert.match(document.getElementById("letter-help").textContent,/Results update as you type/);
     await change(input,"LISTEN");
+    assert.equal(analytics.length, eventsBefore + 1, "one engagement after valid results");
+    assert.deepEqual(analytics.at(-1), {name:"tool_engaged", properties:{tool_name:{unscrambler:"word_unscrambler",anagram:"anagram_solver","tile-game":"tile_game_word_finder"}[mode]}});
     assert.ok(resultWords().includes("silent"), `${mode}: results must update with input, without submit`);
     assert.equal(document.querySelector('[role="status"]').getAttribute("aria-live"),"polite");
     if (mode === "anagram") assert.ok(resultWords().every(word=>word.length===6));
@@ -52,6 +57,7 @@ try {
     assert.ok([...document.querySelectorAll(".filters input")].every(el=>el.value===""));
     assert.equal(document.activeElement,input);
     assert.equal(resultWords().length,0);
+    assert.equal(analytics.length, eventsBefore + 1, "typing, filtering and resetting must not add engagement events");
     await change(input,"123!");
     assert.match(document.querySelector(".resultsPanel").textContent,/No words found/);
     assert.equal(resultWords().length,0);
