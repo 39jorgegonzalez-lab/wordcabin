@@ -16,6 +16,66 @@ const events = win => commands(win).filter(args => args[0] === "event");
 const emit = (win, name, properties) => win.dispatchEvent(new win.CustomEvent(ANALYTICS_EVENT, { detail: { name, properties } }));
 const daily = { challengeId: "daily-2026-09-18", challengeDate: "2026-09-18", difficulty: "medium", attemptNumber: 2, completionStatus: true };
 
+test("Advanced initialization order is deterministic for no choice, stored denial and stored grant", () => {
+  for (const choice of [null, "denied", "granted"]) {
+    const win = fixture("/", choice && JSON.stringify({version:1, analytics:choice}));
+    const append = win.document.head.appendChild.bind(win.document.head);
+    let atInsertion;
+    win.document.head.appendChild = node => {
+      atInsertion = commands(win);
+      return append(node);
+    };
+    initializeGA4(win, id);
+    assert.equal(atInsertion.length, 1, "only consent default exists at tag insertion");
+    assert.deepEqual(atInsertion[0].slice(0, 2), ["consent", "default"]);
+    assert.ok(Object.values(atInsertion[0][2]).every(value => value === "denied"));
+    assert.deepEqual(commands(win).map(c => c.slice(0, 2)), [
+      ["consent", "default"], ["js", commands(win)[1][1]], ["config", id],
+      ...(choice ? [["consent", "update"]] : []), ["event", "page_view"],
+    ]);
+    assert.equal(commands(win).find(c=>c[0]==="config")[2].send_page_view, false);
+    assert.equal(commands(win).filter(c=>c[0]==="consent").at(-1)[2].analytics_storage, choice || "denied");
+    assert.equal(win.document.scripts.length, 1);
+    win.close();
+  }
+});
+
+test("consent update precedes persistence; independent hard opt-out is not overridden", () => {
+  const win = fixture();
+  win[`ga-disable-${id}`] = true;
+  const api = initializeGA4(win, id);
+  let stored = null;
+  Object.defineProperty(win, "localStorage", {value:{
+    getItem:()=>stored,
+    setItem(key, value) {
+      assert.equal(commands(win).at(-1)[0], "consent");
+      assert.equal(commands(win).at(-1)[2].analytics_storage, JSON.parse(value).analytics);
+      stored = value;
+    },
+  }});
+  api.setConsent("granted");
+  api.setConsent("denied");
+  assert.equal(win[`ga-disable-${id}`], true, "do not bypass a separate user opt-out");
+  assert.equal(win.document.querySelector("main").textContent, "Working tool");
+  win.close();
+});
+
+test("denied product activity is dropped, never replayed on grant, while new granted activity is forwarded", () => {
+  const win = fixture();
+  const api = initializeGA4(win, id);
+  const names = ["tool_engaged", "daily_challenge_view", "daily_challenge_start", "daily_challenge_complete", "daily_challenge_failed", "daily_challenge_navigation"];
+  for (const name of names) emit(win, name, name === "tool_engaged" ? {tool_name:"anagram_solver"} : daily);
+  api.setConsent("granted");
+  assert.deepEqual(events(win).map(c=>c[1]), ["page_view"]);
+  for (const name of names) emit(win, name, name === "tool_engaged" ? {tool_name:"anagram_solver"} : daily);
+  assert.deepEqual(events(win).map(c=>c[1]), ["page_view", ...names]);
+  api.setConsent("denied");
+  for (const name of names) emit(win, name, name === "tool_engaged" ? {tool_name:"anagram_solver"} : daily);
+  api.setConsent("granted");
+  assert.deepEqual(events(win).map(c=>c[1]), ["page_view"]);
+  win.close();
+});
+
 test("valid public ID accepted; absent/empty/malformed configurations do nothing", () => {
   assert.ok(validMeasurementId(id));
   for (const bad of [undefined, null, "", " ", "G-123", "G-82FJCYXT95?x=secret", "UA-123", "g-82fjcyxt95"]) {
@@ -26,16 +86,16 @@ test("valid public ID accepted; absent/empty/malformed configurations do nothing
     win.close();
   }
 });
-test("default denied before commands; no Google script or events before opt-in or after decline", () => {
+test("default denied before commands; tag and one page view exist before opt-in, product events remain gated", () => {
   const win = fixture();
   const api = initializeGA4(win, id);
   assert.equal(api.choice, null);
-  assert.equal(win[`ga-disable-${id}`], true);
+  assert.equal(win[`ga-disable-${id}`], undefined);
   assert.deepEqual(commands(win)[0], ["consent", "default", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" }]);
   emit(win, "daily_challenge_complete", daily);
   api.setConsent("denied");
-  assert.equal(win.document.scripts.length, 0);
-  assert.deepEqual(events(win), []);
+  assert.equal(win.document.scripts.length, 1);
+  assert.deepEqual(events(win).map(c => c[1]), ["page_view"]);
   assert.equal(readConsent(win), "denied");
   win.close();
 });
@@ -66,14 +126,16 @@ test("stored choices restore; corrupted/version/extra-field storage fails closed
     const win = fixture("/", JSON.stringify({version:1, analytics:choice}));
     const api = initializeGA4(win, id);
     assert.equal(api.choice, choice);
-    assert.equal(win.document.scripts.length, choice === "granted" ? 1 : 0);
+    assert.equal(win.document.scripts.length, 1);
+    assert.equal(commands(win).filter(c => c[0] === "consent").at(-1)[2].analytics_storage, choice);
     win.close();
   }
   for (const raw of ["{", "null", "[]", "true", '{"version":2,"analytics":"granted"}', '{"version":1,"analytics":"yes"}', '{"version":1,"analytics":"granted","identity":"x"}']) {
     assert.equal(parseConsent(raw), null);
     const win = fixture("/", raw);
     assert.equal(initializeGA4(win, id).choice, null);
-    assert.equal(win.document.scripts.length, 0);
+    assert.equal(win.document.scripts.length, 1);
+    assert.equal(commands(win).filter(c => c[0] === "consent").at(-1)[2].analytics_storage, "denied");
     win.close();
   }
 });
@@ -89,36 +151,37 @@ test("storage read/write denial and quota errors cannot prevent current-page con
     win.close();
   }
 });
-test("revocation synchronously disables destination, purges unsent events, blocks further events", () => {
+test("revocation immediately denies storage, purges queued product events, retains page measurement", () => {
   const win = fixture();
   const api = initializeGA4(win, id);
   api.setConsent("granted");
   emit(win, "daily_challenge_start", daily);
   api.setConsent("denied");
-  assert.equal(win[`ga-disable-${id}`], true);
-  assert.equal(events(win).length, 0);
+  assert.equal(win[`ga-disable-${id}`], undefined);
+  assert.equal(commands(win).at(-1)[2].analytics_storage, "denied");
+  assert.deepEqual(events(win).map(c => c[1]), ["page_view"]);
   emit(win, "daily_challenge_complete", daily);
-  assert.equal(events(win).length, 0);
+  assert.deepEqual(events(win).map(c => c[1]), ["page_view"]);
   assert.equal(readConsent(win), "denied");
   api.setConsent("granted");
   assert.equal(win.document.scripts.length, 1);
-  assert.equal(events(win).length, 0, "regrant does not replay activity or duplicate page view");
+  assert.deepEqual(events(win).map(c => c[1]), ["page_view"], "regrant does not replay activity or duplicate page view");
   win.close();
 });
-test("another tab revoking or clearing preferences also disables measurement", () => {
+test("another tab revoking or clearing preferences returns storage to denied", () => {
   const win = fixture();
   const api = initializeGA4(win, id);
   for (const key of [CONSENT_KEY, null]) {
     api.setConsent("granted");
     win.dispatchEvent(new win.StorageEvent("storage", {key, newValue:null}));
     assert.equal(api.choice, "denied");
-    assert.equal(win[`ga-disable-${id}`], true);
+    assert.equal(commands(win).at(-1)[2].analytics_storage, "denied");
+    assert.equal(win[`ga-disable-${id}`], undefined);
   }
   win.close();
 });
-test("blocked script or throwing gtag never breaks consent/product event dispatch", () => {
+test("blocked script never breaks consent/product event dispatch", () => {
   const win = fixture();
-  win.gtag = () => {throw Error("blocked");};
   assert.doesNotThrow(() => {
     const api = initializeGA4(win, id);
     api.setConsent("granted");
@@ -128,10 +191,23 @@ test("blocked script or throwing gtag never breaks consent/product event dispatc
   });
   win.close();
 });
+test("failed consent-default command prevents tag insertion and leaves the site functional", () => {
+  const win = fixture();
+  win.gtag = () => { throw Error("blocked"); };
+  assert.equal(initializeGA4(win, id), null);
+  assert.equal(win.document.scripts.length, 0);
+  assert.equal(win.document.querySelector("main").textContent, "Working tool");
+  win.close();
+});
 test("all required pages send one explicit sanitized page view per document", () => {
   for (const path of ["/", "/anagram-solver/", "/scrabble-word-finder/", "/daily-word-challenge/", "/daily-word-challenge/2026-09-18/", "/privacy/", "/advertising/"]) {
     const win = fixture(`${path}?query=PRIVATE#PRIVATE`);
-    initializeGA4(win, id).setConsent("granted");
+    const api = initializeGA4(win, id);
+    assert.equal(events(win).length, 1, "no-choice page view");
+    for (const choice of ["denied", "granted", "denied", "granted"]) {
+      api.setConsent(choice);
+      assert.equal(events(win).length, 1, "consent changes must not add a page view");
+    }
     initializeGA4(win, id);
     assert.equal(events(win).filter(c => c[1] === "page_view").length, 1);
     assert.equal(events(win)[0][2].page_location, `https://wordcabin.com${path}`);

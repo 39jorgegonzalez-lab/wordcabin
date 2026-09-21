@@ -1,4 +1,4 @@
-# WORDCABIN GA4 — Phase 1
+# WORDCABIN GA4 — Phase 1, Advanced Consent Mode
 
 ## Scope and baseline
 
@@ -6,7 +6,8 @@ Feature branch: `ga4-analytics-v1`, based on production commit
 `18bb3dc5286f4ca27ec48b5d21a4e566a77c5753`.
 Protected backup: `516111665a5d20f81fa88aeb6702368167599207`.
 No production merge, deployment, alias change, advertising activation, or backup
-change is part of this work. No runtime dependency was added.
+change is part of this work. No runtime dependency was added. This focused revision follows Basic-mode feature
+commit `9b1c24be3a750fed7708bf64ae6842dac4eff383` on the same branch.
 
 ## Architecture
 
@@ -57,11 +58,27 @@ in its reports. No debug flag or automatic environment tag is enabled.
 
 ## Consent and storage
 
-Basic consent mode: no Google script is inserted until explicit opt-in or a
-valid stored grant. All four consent defaults are denied before config or events.
-Grant changes only `analytics_storage`; `ad_storage`, `ad_user_data` and
-`ad_personalization` remain denied. Google signals and ad personalization are
-also explicitly disabled in config.
+Basic mode (the previous implementation) blocked the Google tag until opt-in.
+Advanced mode (this revision) loads the tag asynchronously with denied defaults
+already set, allowing limited consent-aware cookieless page measurement.
+
+Deterministic order for each configured document:
+
+1. Initialize `dataLayer` and `gtag`.
+2. Queue all four consent defaults as denied.
+3. Insert the asynchronous Google tag once.
+4. Queue `js` and GA4 `config`, with `send_page_view:false`, Google signals off,
+   ad personalization off and sanitized page fields.
+5. Apply a valid stored choice, if present. Only analytics storage can be granted.
+6. Queue exactly one explicit sanitized `page_view`.
+
+If the default consent command fails, initialization stops before tag insertion.
+No saved choice or a malformed preference keeps analytics storage denied. A saved
+grant is applied before the page-view command. Consent changes later in the same
+document never issue another page view. Product events remain gated until grant.
+Google may produce consent-state pings or other consent-aware requests; a request
+is not evidence of analytics storage being granted or a duplicate page-view command.
+`ad_storage`, `ad_user_data` and `ad_personalization` remain denied in every state.
 
 The equal-style Allow analytics / Decline buttons are in document flow: no modal,
 overlay, scroll lock, forced action or inaccessible underlying tool.
@@ -74,28 +91,37 @@ Extra fields, corrupt JSON, unsupported versions and malformed records are
 treated as no choice. No personal data is stored; daily progress uses its own key.
 If storage is denied/full, the preference still applies in memory to the current
 document. A new document defaults to denied if no valid preference can be read.
-Clearing storage resets preference. Cross-tab storage changes revoke collection
-in already open tabs too.
+Clearing storage resets preference. Cross-tab storage changes return analytics
+storage to denied and gate product events in already open tabs too.
 
-Revocation immediately gates product events, sets the destination's
-`ga-disable-G-82FJCYXT95` flag before updating Google consent, and removes queued
-measurement events waiting for a blocked/slow script. The loaded script is not
-reinserted. A subsequent grant does not replay prior activity or duplicate the
-same document's page view. Previously delivered or in-flight requests cannot be
-recalled. Existing Google cookies are not represented as deleted by this action.
-Blocked scripts and storage/gtag failures must never block product functionality.
+Revocation immediately gates product events and queues an analytics-storage-denied
+consent update before persisting the preference. It removes pending product event
+commands waiting for a blocked/slow tag, but retains the single page-view command.
+Previously dispatched or in-flight requests cannot be recalled. Existing cookies
+are not represented as deleted: denied consent tells Google not to use analytics
+storage going forward. Denied-mode cookieless signals may continue.
+
+The adapter no longer sets `ga-disable-G-82FJCYXT95`: that hard switch would also
+suppress Advanced-mode denied measurement. It does not clear or override a separate
+opt-out flag established outside this adapter. Google consent state controls tag
+storage behavior; the site separately gates product events. Regrant does not
+replay denied or revoked activity. Blocked scripts and storage/gtag failures must
+never block product functionality.
 
 ## Event contract
 
 | GA4 event | Permitted product properties |
 | --- | --- |
-| `page_view` | No caller-supplied fields; fixed route-derived page fields |
+| `page_view` | Fixed route-derived page fields; issued in denied or granted mode |
 | `tool_engaged` | `tool_name`: `word_unscrambler`, `anagram_solver`, `tile_game_word_finder` |
 | `daily_challenge_view` | Validated daily properties below |
 | `daily_challenge_start` | Validated daily properties below |
 | `daily_challenge_complete` | Validated daily properties below |
 | `daily_challenge_failed` | Validated daily properties below |
 | `daily_challenge_navigation` | Validated daily properties below |
+
+All product-specific events in the table require a current analytics grant.
+Only the explicit page view can be issued without it.
 
 Daily properties: `challengeId` (explicit `daily-YYYY-MM-DD`), `challengeDate`
 (valid matching calendar date), `difficulty` (easy/medium/hard), `attemptNumber`
@@ -117,7 +143,7 @@ the document. Navigation can occur more than once. No gameplay/storage/streak
 semantics changed.
 
 Config uses `send_page_view:false`; the adapter explicitly sends one page view
-on the first valid grant per document. All event page locations are constructed
+at initialization per document, under the effective denied or stored-granted state. All event page locations are constructed
 from allowed route paths using the canonical origin `https://wordcabin.com`.
 Query strings, fragments, raw document titles and referrers are excluded. Preview
 therefore also reports canonical paths; its hostname is not an event dimension.
@@ -126,7 +152,10 @@ No attribution/referrer/campaign parameters are retained in this minimal phase.
 No solver input, query, filter text, guess, answer, solution, email, name, user ID,
 localStorage record or free-form text is forwarded. GA itself may emit ordinary
 session/first-visit/engagement signals and receive request/browser information
-after consent; the site does not claim that Google receives no technical data.
+under the applicable consent state; the site does not claim that Google receives
+no technical data while denied. Cookieless signals are not exact visitor or full
+session counts. Behavioral modeling is controlled by Google, may require
+eligibility thresholds, and is not guaranteed or asserted to be active.
 
 ## Automated verification
 
@@ -148,11 +177,15 @@ git diff --stat 18bb3dc5286f4ca27ec48b5d21a4e566a77c5753
 git ls-remote --heads origin
 ```
 
-Tests cover configuration, default/restored/corrupt/revoked consent, denied and
+Tests cover default-before-load/config/event ordering, denied-mode loading,
+restoring consent before page view, no hard-disable override, immediate updates,
+configuration, default/restored/corrupt/revoked consent, denied and
 quota storage failures, idempotent asynchronous script initialization, throwing
 gtag, safe event properties and values, unknown/noisy events, sanitized single
 page views for all required routes, one tool engagement, cross-tab revocation,
-and real DOM consent and Daily completion/replay behavior. Existing solver,
+and real DOM consent and Daily completion/replay behavior. Page-view counts are
+checked through no-choice, decline, grant and revocation; product events are
+checked for gating and no backlog replay. Existing solver,
 dictionary pipeline/eligibility/integrity/production-write guards, Daily and site
 suites remain enabled. Real tool DOM tests additionally observe the neutral
 engagement events across all three tool modes.
@@ -170,44 +203,71 @@ Do not substitute DOM tests or a queued `gtag` command for actual delivery.
 Open the authenticated Vercel **Preview** for the final feature commit, using an
 owner browser if Vercel authentication blocks the automated browser.
 
-1. Open developer tools → Network (preserve log), filter `google`, `gtag`,
-   `collect`; start with fresh consent storage for this Preview origin.
-2. Before choosing and after Decline: exercise each tool and Daily; there must
-   be no Google tag request or Analytics collection request. All products work.
-3. Open Analytics preferences → Allow analytics. Confirm one `gtag/js` request
-   for the expected ID, then `g/collect` requests to the expected destination.
-4. Visit `/`, `/anagram-solver/`, `/scrabble-word-finder/`, archive, a published
-   dated challenge, `/privacy/` and `/advertising/`. Confirm one `page_view` per
-   document navigation (not an additional automatic one). Consent remains saved.
-5. On each tool type a known test rack, change it, filter and reset. Inspect
-   requests: one `tool_engaged`, correct enum, no entered letters or filters.
-6. Start/complete Daily. Inspect safe event parameters and absence of guesses or
-   answers. Successful replay must not count another original completion.
-7. Reopen preferences and Decline. Clear the Network log; interact, wait and
-   navigate. No new Analytics collection may occur. Requests already in flight
-   at revocation are not evidence of new post-revocation collection.
+1. First confirm the GA4 account settings above and build Preview with
+   `VITE_GA4_MEASUREMENT_ID=G-82FJCYXT95`.
+2. Open DevTools → Network (preserve log) and Application → Cookies. Start with a
+   fresh Preview-origin preference and no existing analytics cookies. Inspect
+   Google requests, their consent state, destination ID and payloads.
+3. Before choosing: expect one asynchronous `gtag/js` load, denied analytics and
+   advertising storage, no newly created normal GA analytics cookies, and possible
+   cookieless measurement requests. Use the tools; no product engagement events
+   should be forwarded. A Google request alone is not a failure.
+4. Decline: storage remains denied; cookieless signals may continue and products
+   remain fully functional. Confirm no normal cookie-based analytics grant.
+5. Reopen Analytics preferences → Allow analytics. Confirm analytics storage
+   becomes granted while all ad-related states stay denied. Normal GA4 requests
+   can occur; inspect one `tool_engaged` per newly engaged tool/document and safe
+   Daily events. No letters, queries, filters, guesses or answers may appear.
+6. Visit `/`, `/anagram-solver/`, `/scrabble-word-finder/`, archive, a published
+   dated challenge, `/privacy/` and `/advertising/`. Confirm one explicit
+   `page_view` command per navigation, without an additional automatic page view.
+   Consent updates/pings are not additional page-view commands. Check no-choice,
+   denied, granted and revoked states separately.
+7. Reopen preferences and Decline. Inspect the immediate denied update. Subsequent
+   normal analytics storage/collection must stop; denied-mode cookieless requests
+   may continue. Product events must stop, without replay after regrant. Requests
+   already in flight cannot be recalled. Existing cookies may remain on disk;
+   inspect future behavior rather than assuming they are erased.
 8. Inspect desktop and narrow mobile layouts: comparable choices, keyboard focus,
-   no clipped/overlapping controls, no horizontal overflow, products usable with
-   banner open or dismissed. Check console for product-breaking errors.
+   no clipped/overlapping controls or horizontal overflow, accurate cookieless
+   disclosure and usable tools with the banner open or dismissed.
 
 ## Owner Realtime acceptance
 
 Open Google Analytics → WORDCABIN → Reports → Realtime. In the configured Preview
-grant analytics, visit several pages, engage a core tool and start/complete a
+first inspect no-choice/denied behavior, then grant analytics, visit the homepage,
+Anagram Solver, Tile-Game Word Finder and Daily archive/challenge. Engage a core
+tool and start/complete a
 Daily challenge. Confirm `page_view`, `tool_engaged` and safe Daily events arrive
 under the intended web stream. Allow normal reporting delay. If absent, inspect
 blocked requests, destination ID, stream settings and consent before changing code.
 
 **PENDING OWNER VERIFICATION** until the owner explicitly confirms actual
-Realtime receipt. Passing local tests is not a Realtime or network PASS.
+Realtime receipt. Passing local tests is not a Realtime or network PASS. Denied
+signals need not appear as full Realtime sessions. Do not claim behavioral modeling
+is active unless the property explicitly indicates eligibility.
 
 ## Performance and rollback
 
 No analytics SDK/runtime package added. The shared vanilla adapter is about
-5.7 KB minified / 2.4 KB gzip plus 0.45 KB gzip CSS. Google loads asynchronously
-only after grant. External Google payload is vendor-controlled and is not part
-of the first-party build or pre-consent load. The dictionary remains one shared
+a few KB minified plus under 1 KB gzip CSS; measure the current build for exact
+values. Google now loads asynchronously before opt-in with consent denied. Its
+external payload is vendor-controlled, adds pre-consent network cost, and is not
+included in first-party bundle measurements. The dictionary remains one shared
 tool chunk; static legal pages load only the analytics chunk.
+
+Configured-build comparison against `9b1c24b`, using Node `zlib.gzipSync`:
+
+| Payload | Basic gzip bytes | Advanced gzip bytes |
+| --- | ---: | ---: |
+| Analytics JS | 2,413 | 2,412 |
+| Consent CSS | 453 | 453 |
+| Homepage JS graph | 329,452 | 329,457 |
+| Daily JS graph | 69,549 | 69,556 |
+
+Advanced analytics JS is 5,691 raw bytes; consent CSS is 926 raw bytes.
+No new chunk family or dependency was introduced. Small route differences include
+changed hashed import references; the dictionary itself is unchanged.
 
 Rollback before merge: leave production at the baseline and discard/revise only
 this feature branch. After a later authorized release: an owner-approved revert
@@ -219,8 +279,9 @@ rebuilding disables this integration (a rebuild/deployment still needs approval)
 
 - Stream/tag settings and Vercel environment variables require owner-accessible
   account configuration; the adapter cannot verify these remotely.
-- Opt-in-only measurement intentionally undercounts total visitors and drops
-  pre-consent interactions. No event backlog is kept.
+- Product engagement remains opt-in-only; pre-consent interactions are dropped.
+  No backlog is kept. Cookieless page signals do not guarantee exact visitor
+  counts, complete sessions or eligibility for modeled reporting.
 - Storage rejection means preferences last only for the current document.
 - Browser blockers can prevent Google delivery despite a valid grant.
 - Tests inspect command queues and DOM behavior, not Google's ingestion service.
@@ -229,5 +290,6 @@ rebuilding disables this integration (a rebuild/deployment still needs approval)
 - The existing seven-challenge inventory warning is unrelated and unchanged.
 
 References: [Google consent setup](https://developers.google.com/tag-platform/security/guides/consent),
+[Advanced versus Basic mode](https://developers.google.com/tag-platform/security/concepts/consent-mode),
 [manual page views](https://developers.google.com/analytics/devguides/collection/ga4/views),
 [Enhanced Measurement settings](https://support.google.com/analytics/answer/9216061).

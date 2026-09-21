@@ -11,7 +11,7 @@ export function mountAnalytics(win, id) {
     panel.className = "analyticsConsent";
     panel.setAttribute("aria-labelledby", "analytics-heading");
     panel.hidden = api.choice !== null;
-    panel.innerHTML = '<div><h2 id="analytics-heading">Optional analytics</h2><p>Allow Google Analytics to help us understand site usage? Your letters and answers are not sent. The tools work either way. <a href="/privacy/">Privacy</a></p><p class="analyticsStatus" role="status"></p></div><div class="analyticsChoices"><button type="button" data-choice="granted">Allow analytics</button><button type="button" data-choice="denied">Decline</button></div>';
+    panel.innerHTML = '<div><h2 id="analytics-heading">Analytics preferences</h2><p>Allow Google Analytics cookies and tool-usage measurement? If you decline, Google may still receive limited cookieless page signals. Your letters and answers are not sent as analytics events. The tools work either way. <a href="/privacy/">Privacy</a></p><p class="analyticsStatus" role="status"></p></div><div class="analyticsChoices"><button type="button" data-choice="granted">Allow analytics</button><button type="button" data-choice="denied">Decline</button></div>';
     const footer = doc.createElement("div");
     footer.className = "analyticsFooter";
     const reopen = doc.createElement("button");

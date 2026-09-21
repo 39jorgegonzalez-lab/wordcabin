@@ -26,7 +26,7 @@ try {
   document.querySelector('[data-choice="denied"]').click();
   assert.equal(api.choice, "denied");
   assert.equal(panel.hidden, true);
-  assert.equal(document.querySelectorAll("script[data-wordcabin-ga4]").length, 0);
+  assert.equal(document.querySelectorAll("script[data-wordcabin-ga4]").length, 1);
   document.querySelector(".analyticsFooter button").click();
   assert.equal(panel.hidden, false);
   assert.equal(document.activeElement, panel.querySelector("button"));
@@ -37,7 +37,9 @@ try {
   document.querySelector(".analyticsFooter button").click();
   document.querySelector('[data-choice="denied"]').click();
   assert.equal(api.choice, "denied");
-  assert.equal(window["ga-disable-G-82FJCYXT95"], true);
+  assert.equal(window["ga-disable-G-82FJCYXT95"], undefined);
+  assert.equal(Array.from(window.dataLayer.at(-1))[2].analytics_storage, "denied");
+  assert.match(panel.textContent, /limited cookieless page signals/);
   console.log("PASS: real consent DOM, comparable choices, nonmodal decline/grant/reopen/revoke and focus");
 
   const { DailyChallengeApp } = await server.ssrLoadModule("/src/daily/DailyChallengeApp.jsx");

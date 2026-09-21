@@ -30,53 +30,41 @@ export function initializeGA4(win, measurementId) {
   if (!page) return null;
   if (win.__wordcabinGA4) return win.__wordcabinGA4;
   let choice = readConsent(win);
-  let configured = false;
-  let pageSent = false;
   const seen = new Set();
-  const disableKey = `ga-disable-${measurementId}`;
-  win[disableKey] = true;
   win.dataLayer = win.dataLayer || [];
   win.gtag = win.gtag || function () { win.dataLayer.push(arguments); };
-  const command = (...args) => { try { win.gtag(...args); } catch { /* Noncritical. */ } };
-  command("consent", "default", { ...denied });
+  const command = (...args) => {
+    try { win.gtag(...args); return true; } catch { return false; }
+  };
+  // Never load a tag if denied defaults could not be established.
+  if (!command("consent", "default", { ...denied })) return null;
 
-  function enable() {
-    win[disableKey] = false;
-    command("consent", "update", { ...denied, analytics_storage: "granted" });
-    if (!configured) {
-      configured = true;
-      command("js", new Date());
-      command("config", measurementId, {
-        send_page_view: false, allow_google_signals: false,
-        allow_ad_personalization_signals: false, ignore_referrer: true,
-        ...page,
-      });
-      try { if (!win.document.querySelector("script[data-wordcabin-ga4]")) {
-        const script = win.document.createElement("script");
-        script.async = true;
-        script.dataset.wordcabinGa4 = "true";
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-        win.document.head.appendChild(script);
-      } } catch { /* Script blocking must not interrupt the preference UI. */ }
-    }
-    if (!pageSent && page) {
-      pageSent = true;
-      command("event", "page_view", { ...page, send_to: measurementId });
-    }
-  }
+  // Advanced mode: load with denied defaults already queued. Never override
+  // an independent opt-out flag; consent changes do not use ga-disable.
+  try { if (!win.document.querySelector("script[data-wordcabin-ga4]")) {
+    const script = win.document.createElement("script");
+    script.async = true;
+    script.dataset.wordcabinGa4 = "true";
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+    win.document.head.appendChild(script);
+  } } catch { /* Script blocking must not interrupt the preference UI. */ }
+  command("js", new Date());
+  command("config", measurementId, {
+    send_page_view: false, allow_google_signals: false,
+    allow_ad_personalization_signals: false, ignore_referrer: true,
+    ...page,
+  });
   function apply(value, persist = true) {
     choice = value === "granted" ? "granted" : "denied";
-    // Disable synchronously, before the queued consent update can be processed.
-    win[disableKey] = choice !== "granted";
-    if (persist) saveConsent(win, choice);
-    if (choice === "granted") enable();
-    else {
-      // Remove events still waiting for a blocked/slow script. Never replay them.
+    if (choice === "denied") {
+      // Discard product commands still waiting for a blocked/slow tag. Retain
+      // the single page view: denied consent permits cookieless page measurement.
       for (let i = win.dataLayer.length - 1; i >= 0; i--) {
-        if (win.dataLayer[i]?.[0] === "event") win.dataLayer.splice(i, 1);
+        if (win.dataLayer[i]?.[0] === "event" && win.dataLayer[i][1] !== "page_view") win.dataLayer.splice(i, 1);
       }
-      command("consent", "update", { ...denied });
     }
+    command("consent", "update", { ...denied, analytics_storage: choice });
+    if (persist) saveConsent(win, choice);
   }
   win.addEventListener(ANALYTICS_EVENT, event => {
     if (choice !== "granted" || !page) return;
@@ -94,6 +82,8 @@ export function initializeGA4(win, measurementId) {
   });
   const api = { get choice() { return choice; }, setConsent: apply };
   win.__wordcabinGA4 = api;
-  if (choice === "granted") enable();
+  // Restore a valid saved choice before the one explicit page-view command.
+  if (choice !== null) apply(choice, false);
+  command("event", "page_view", { ...page, send_to: measurementId });
   return api;
 }
