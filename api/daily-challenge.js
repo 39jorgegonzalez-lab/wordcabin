@@ -15,7 +15,7 @@ export function dailyResponse(date, { now = new Date(), readShell = () => readFi
     const navigation = getChallengeNavigation(scheduledChallenges(today), challenge);
     return { status: 200, headers, body: replaceMeta(shell, {
       title: `Daily Word Challenge — ${date} | WordCabin`,
-      description: `Solve the ${date} WordCabin daily word challenge. A rotating collection of curated practice puzzles.`,
+      description: `Solve the ${date} WordCabin daily word challenge. ${challenge.isRepeat ? "A clearly labeled repeat from our curated collection." : "A clue-driven puzzle from our curated collection."}`,
       robots: 'noindex, follow', canonical: `https://wordcabin.com${challengeRoute(challenge)}`,
       staticContent: challengeStaticContent(challenge, navigation),
     }) };

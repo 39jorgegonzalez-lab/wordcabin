@@ -66,7 +66,7 @@ function ArchiveView({ published, progress, canonicalDate }) {
       </section>
       <section className="dailyArchive" aria-labelledby="archive-title">
         <h2 id="archive-title">Challenge archive</h2>
-        <p>Recent 30 days and the original collection. Earlier days remain available through Previous/Next. Daily practice rotates through seven curated puzzles; words and clues repeat weekly.</p>
+        <p>Recent 30 days and the original collection. Earlier days remain available through Previous/Next. The collection includes 90 new puzzles beginning November 3, 2026. After all puzzles in a collection have appeared, repeats are labeled. Earlier practice dates retain their original puzzles.</p>
         <ul>
           {[...recentArchive(published)].reverse().map((challenge) => {
             const completed = Boolean(progress.completions[challenge.id]);
@@ -187,7 +187,8 @@ function ChallengeView({ challenge, published, progress, setProgress }) {
       <article className="challengeCard">
         <p className="dailyEyebrow">Daily Word Challenge · {displayDate(challenge.date)}</p>
         <h1>Unscramble the cabin word.</h1>
-        {challenge.rotationVersion && <p>Daily practice · a repeating seven-puzzle collection.</p>}
+        {challenge.rotationVersion && <p>Archived practice · the original seven-puzzle collection.</p>}
+        {challenge.isRepeat && <p>Repeat challenge · this puzzle appeared earlier in this collection.</p>}
         <p className="challengeClue"><strong>Clue:</strong> {challenge.clue}</p>
         <div className="letterTiles" aria-label={`Letters: ${challenge.letters.split("").join(", ")}`}>
           {challenge.letters.split("").map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}

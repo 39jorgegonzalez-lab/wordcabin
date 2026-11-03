@@ -15,7 +15,7 @@ for (const date of dates) {
   assert.equal(letterSignature(first.answer), letterSignature(first.letters));
   assert.ok(first.acceptedAnagrams.includes(first.answer));
 }
-assert.equal(scheduledChallenge('2026-11-02','2026-11-02').answer, scheduledChallenge('2026-11-09','2026-11-09').answer, 'documented weekly repetition');
+assert.equal(scheduledChallenge('2026-10-26','2026-10-26').answer, scheduledChallenge('2026-11-02','2026-11-02').answer, 'documented weekly repetition');
 for (const invalid of ['2026-02-30','2027-02-29','2026-9-22','../../secrets','2026-09-17','2100-01-01']) assert.equal(scheduledChallenge(invalid,'2100-01-01'),null);
 assert.equal(scheduledChallenge('2026-11-03','2026-11-02'),null);
 assert.equal(bogotaDateFromInstant('2026-11-03T04:59:59.999Z'),'2026-11-02');

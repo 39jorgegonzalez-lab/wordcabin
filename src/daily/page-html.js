@@ -47,5 +47,5 @@ export function challengeStaticContent(challenge, navigation) {
   const next = navigation.next
     ? `<a rel="next" href="${challengeRoute(navigation.next)}">Next challenge</a>`
     : "";
-  return `<main><nav><a href="/">WordCabin home</a> · <a href="${DAILY_ROUTE_PREFIX}/">Challenge archive</a></nav><h1>Daily Word Challenge for ${escapeHtml(challenge.date)}</h1><p>Unscramble the letters <strong>${escapeHtml(challenge.letters.toUpperCase())}</strong> using this clue: ${escapeHtml(challenge.clue)}</p><nav>${previous}${previous && next ? " · " : ""}${next}</nav></main>`;
+  return `<main><nav><a href="/">WordCabin home</a> · <a href="${DAILY_ROUTE_PREFIX}/">Challenge archive</a></nav><h1>Daily Word Challenge for ${escapeHtml(challenge.date)}</h1>${challenge.isRepeat ? "<p>Repeat challenge from the collection.</p>" : ""}<p>Unscramble the letters <strong>${escapeHtml(challenge.letters.toUpperCase())}</strong> using this clue: ${escapeHtml(challenge.clue)}</p><nav>${previous}${previous && next ? " · " : ""}${next}</nav></main>`;
 }

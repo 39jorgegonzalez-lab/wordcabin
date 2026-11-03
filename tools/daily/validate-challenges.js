@@ -1,5 +1,6 @@
 import { pathToFileURL } from "node:url";
 import { createHash } from "node:crypto";
+import { validateInventories } from "./validate-inventories.js";
 import { SCHEDULE_END } from "../../src/daily/schedule.js";
 
 import { DAILY_CHALLENGES } from "../../src/daily/challenges.js";
@@ -22,9 +23,11 @@ export function runChallengeValidation({ instant = new Date(), logger = console 
   logger.log(
     `PASS: ${DAILY_CHALLENGES.length} daily challenges validated against ${WORDS.length} production dictionary entries.`,
   );
-  logger.log(
-    `Publication: immutable seven-puzzle practice rotation through ${SCHEDULE_END}; no daily inventory or build needed. Puzzles repeat weekly.`,
-  );
+  const inventories = validateInventories({today:canonicalDate});
+  if (!inventories.passed) throw new Error(inventories.errors.join("\n"));
+  const stock = inventories.status;
+  logger.log(`PASS: ${stock.totalDistinct} distinct validated puzzles; ${stock.publishedDistinct} previously published, ${stock.unpublishedDistinct} unpublished; unique inventory through ${stock.uniqueThrough}.`);
+  if (stock.warning) logger.warn(`WARNING: DAILY INVENTORY LOW — ${stock.unpublishedDistinct} unpublished unique puzzles remain; add a validated versioned batch before ${stock.uniqueThrough}. Labeled repeats follow exhaustion.`);
   return result;
 }
 

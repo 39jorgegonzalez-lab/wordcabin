@@ -147,9 +147,15 @@ assert.equal(hosting.cleanUrls, true);
 assert.equal(hosting.functions['api/daily-challenge.js'].includeFiles, 'dist/_runtime/daily-shell.txt');
 assert.deepEqual(hosting.rewrites, [{source:'/daily-word-challenge/:date', destination:'/api/daily-challenge?date=:date'}]);
 assert.equal(read('_runtime/daily-shell.txt'), read('index.html'));
-for (const date of ['2026-09-22','2026-09-23','2026-09-24','2026-11-02','2026-11-03','2026-12-31','2027-01-01','2028-02-29','2031-07-18']) {
+const v2Dates = Array.from({length:90}, (_,i)=>new Date(Date.parse('2026-11-03T00:00:00Z')+i*86400000).toISOString().slice(0,10));
+for (const date of [...new Set(['2026-09-22','2026-09-23','2026-09-24','2026-11-02','2026-11-03','2026-12-31','2027-01-01','2027-02-01','2028-02-29','2031-07-18',...v2Dates])]) {
   const result = dailyResponse(date, {now:new Date(`${date}T17:00:00Z`)});
   assert.equal(result.status, 200);
+  const puzzle=scheduledChallenge(date,date);
+  const head=result.body.split('</head>')[0];
+  const metadata=[head.match(/<title>(.*?)<\/title>/s)?.[1]||'', ...[...head.matchAll(/<meta[^>]+content="([^"]*)"/g)].map(m=>m[1])].join(' ').toLowerCase();
+  assert.equal(metadata.includes(puzzle.answer),false,'runtime metadata values must not reveal answer');
+  if(puzzle.isRepeat)assert.match(result.body,/Repeat challenge from the collection/);
   assert.equal(result.headers['Cache-Control'], 'no-store');
   assert.ok(result.body.includes(`https://wordcabin.com/daily-word-challenge/${date}/`));
   assert.ok(result.body.includes(`/${manifest['index.html'].file}`));

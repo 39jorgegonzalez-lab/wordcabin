@@ -37,7 +37,7 @@ export function DailyPromo() {
         </h2>
         <p>
           Unscramble one clue-driven word in a few focused attempts.
-          {challenge.rotationVersion ? " Daily practice repeats a seven-puzzle collection weekly." : ""}
+          {challenge.rotationVersion ? " Daily practice repeats a seven-puzzle collection weekly; 90 new puzzles begin November 3." : challenge.isRepeat ? " Repeat challenge from the collection." : ""}
           {completed ? " Completed on this device." : " Your progress stays on this device."}
         </p>
         {streaks.current > 0 && <strong className="dailyPromoStreak">Current streak: {streaks.current}</strong>}

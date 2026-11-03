@@ -159,3 +159,7 @@ Local `wordcabin.daily.v1` data becomes harmless orphaned browser storage after 
 - Clearing site storage removes progress.
 - The answer exists client-side as part of the challenge application. This is a casual word game, not a security boundary. Do not claim that the answer is secret from users inspecting browser assets.
 - Dated challenge pages remain `noindex,follow` and are intentionally absent from the sitemap.
+
+## Version 1 inventory expansion (November 2, 2026)
+
+The original seven-puzzle scope above describes Phase 1 history. The owner subsequently authorized Inventory V2 with 90 additional distinct puzzles. See DAILY_PUBLICATION_RC.md for current publication/versioning/repeat policy and DAILY_CONTENT_STANDARD.md for validation. The original seven records and existing gameplay remain unchanged.

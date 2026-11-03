@@ -22,7 +22,7 @@ Production GA4: VITE_GA4_MEASUREMENT_ID=G-82FJCYXT95. No private analytics crede
 
 ## Candidate daily publication (product approval pending)
 
-See DAILY_PUBLICATION_RC.md. The candidate preserves September 18–24 exactly and resolves later published dates on demand using a seven-puzzle weekly practice rotation. This is not an approved promise of fresh unique daily content. The original static build-date ceiling is superseded only by the candidate runtime function. No cron or daily rebuild is required, but actual Vercel rewrite/function packaging must pass Preview acceptance before release.
+See DAILY_PUBLICATION_RC.md. The candidate preserves September 18–24 exactly and retains later legacy practice mappings before November 3. Inventory V2 then provides 90 new unique puzzles, followed only if necessary by labeled 90-day repeats. The original static build-date ceiling is superseded only by the candidate runtime function. No cron or daily rebuild is required, but actual Vercel rewrite/function packaging must pass Preview acceptance before release.
 
 ## Monitoring
 
@@ -54,3 +54,5 @@ The known source rollback baseline is 7468e6f9d8c04e299cf58f9402f8842534f5d610. 
 Owner-only checks, consolidated with release review: Vercel project Git/production branch, build environment scope, failure-notification recipient, last-good rollback availability, and function limits. GitHub source backup does not provide a runtime availability monitor. No external alert delivery has been verified. Keep a daily read-only route check and act on nonzero exit; do not claim alerts are active merely because the script exists.
 
 No Vercel plugin, password, token, or session-cookie access is requested. The owner declined the broad-permission integration.
+
+Inventory warning: a daily ChatGPT condition watch is enabled for distinct stock below 30, with milestone notifications at 29/14/7/0. Its first delivery remains unverified; it is not a production uptime monitor. See DAILY_PUBLICATION_RC.md.
