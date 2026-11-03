@@ -1,6 +1,43 @@
 {
-  "buildCommand": "npm run build",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": "dist",
+  "functions": {
+    "api/daily-challenge.js": {
+      "includeFiles": "dist/_runtime/daily-shell.txt",
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/daily-word-challenge/:date",
+      "destination": "/api/daily-challenge?date=:date"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/_runtime/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ],
+  "buildCommand": "npm run build",
   "framework": "vite",
   "cleanUrls": true
 }

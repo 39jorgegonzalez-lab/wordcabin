@@ -1,4 +1,6 @@
 import { pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
+import { SCHEDULE_END } from "../../src/daily/schedule.js";
 
 import { DAILY_CHALLENGES } from "../../src/daily/challenges.js";
 import {
@@ -10,7 +12,9 @@ import { WORDS } from "../../src/data/words.js";
 export function runChallengeValidation({ instant = new Date(), logger = console } = {}) {
   const canonicalDate = bogotaDateFromInstant(instant);
   const result = validateChallengeDataset(DAILY_CHALLENGES, WORDS, { canonicalDate });
-  for (const warning of result.warnings) logger.warn(`WARNING: ${warning}`);
+  const fingerprint = createHash("sha256").update(JSON.stringify(DAILY_CHALLENGES)).digest("hex");
+  if (fingerprint !== "0db4bc544c3512a4af522510fd65a7234af61a56a703a440de6da82f8044f09c") throw new Error("Immutable rotation v1 source changed; published puzzles must not change.");
+  if (canonicalDate >= "2099-12-01") logger.warn(`WARNING: daily schedule reaches its supported horizon ${SCHEDULE_END}; extend through a versioned migration.`);
   if (!result.passed) {
     for (const error of result.errors) logger.error(`ERROR: ${error}`);
     throw new Error(`Daily challenge validation failed with ${result.errors.length} error(s).`);
@@ -19,7 +23,7 @@ export function runChallengeValidation({ instant = new Date(), logger = console 
     `PASS: ${DAILY_CHALLENGES.length} daily challenges validated against ${WORDS.length} production dictionary entries.`,
   );
   logger.log(
-    `Inventory: ${result.inventory.futureCount} future unpublished challenge(s) after ${canonicalDate}.`,
+    `Publication: immutable seven-puzzle practice rotation through ${SCHEDULE_END}; no daily inventory or build needed. Puzzles repeat weekly.`,
   );
   return result;
 }

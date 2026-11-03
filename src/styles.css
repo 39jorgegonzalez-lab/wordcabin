@@ -304,3 +304,8 @@ footer a {
   .dailyPromoActions { align-items: flex-start; flex-direction: column; width: 100%; }
   .dailyPromoActions .dailyPrimaryLink { width: 100%; }
 }
+
+.advertisingControls { max-width: 1180px; margin: 1.5rem auto; padding: 0 1rem; }
+.advertisingControls button { min-height: 44px; padding: .65rem 1rem; margin: .25rem; border: 1px solid currentColor; border-radius: .5rem; background: #fffaf0; color: #214c40; }
+.advertisingControls button:focus-visible { outline: 3px solid #9c640d; outline-offset: 3px; }
+.advertisingControls .adSlot { min-height: 310px; overflow: hidden; }

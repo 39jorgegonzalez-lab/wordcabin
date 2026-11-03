@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { DAILY_CHALLENGES } from "./challenges.js";
+import { scheduledChallenges } from "./schedule.js";
+import { usePublicationDate } from "./use-publication-date.js";
 import {
-  bogotaDateFromInstant,
   challengeRoute,
   computeStreaks,
   selectTodayOrLatest,
@@ -10,7 +10,9 @@ import {
 import { DAILY_STORAGE_KEY, readDailyProgress } from "./storage.js";
 
 export function DailyPromo() {
-  const challengeIds = useMemo(() => DAILY_CHALLENGES.map((challenge) => challenge.id), []);
+  const canonicalDate = usePublicationDate();
+  const published = useMemo(() => scheduledChallenges(canonicalDate), [canonicalDate]);
+  const challengeIds = useMemo(() => published.map((challenge) => challenge.id), [published]);
   const [progress, setProgress] = useState(() => readDailyProgress(undefined, challengeIds));
   useEffect(() => {
     const refresh = (event) => {
@@ -19,9 +21,8 @@ export function DailyPromo() {
     window.addEventListener("storage", refresh);
     return () => window.removeEventListener("storage", refresh);
   }, [challengeIds]);
-  const canonicalDate = bogotaDateFromInstant();
-  const selection = selectTodayOrLatest(DAILY_CHALLENGES, canonicalDate);
-  const streaks = computeStreaks(DAILY_CHALLENGES, progress.completions, canonicalDate);
+  const selection = selectTodayOrLatest(published, canonicalDate);
+  const streaks = computeStreaks(published, progress.completions, canonicalDate);
   const challenge = selection.challenge;
 
   if (!challenge) return null;
@@ -36,6 +37,7 @@ export function DailyPromo() {
         </h2>
         <p>
           Unscramble one clue-driven word in a few focused attempts.
+          {challenge.rotationVersion ? " Daily practice repeats a seven-puzzle collection weekly." : ""}
           {completed ? " Completed on this device." : " Your progress stays on this device."}
         </p>
         {streaks.current > 0 && <strong className="dailyPromoStreak">Current streak: {streaks.current}</strong>}

@@ -2,15 +2,14 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Flame, Home, RotateCcw } from "lucide-react";
 
 import { emitDailyEvent } from "./analytics.js";
-import { DAILY_CHALLENGES } from "./challenges.js";
+import { scheduledChallenges, recentArchive } from "./schedule.js";
+import { usePublicationDate } from "./use-publication-date.js";
 import {
   DAILY_ROUTE_PREFIX,
-  bogotaDateFromInstant,
   challengeRoute,
   computeStreaks,
   findChallengeByPath,
   getChallengeNavigation,
-  getPublishedChallenges,
   selectTodayOrLatest,
 } from "./challenge-model.js";
 import { createGameState, replayGame, submitGuess } from "./game-reducer.js";
@@ -67,8 +66,9 @@ function ArchiveView({ published, progress, canonicalDate }) {
       </section>
       <section className="dailyArchive" aria-labelledby="archive-title">
         <h2 id="archive-title">Challenge archive</h2>
+        <p>Recent 30 days and the original collection. Earlier days remain available through Previous/Next. Daily practice rotates through seven curated puzzles; words and clues repeat weekly.</p>
         <ul>
-          {[...published].reverse().map((challenge) => {
+          {[...recentArchive(published)].reverse().map((challenge) => {
             const completed = Boolean(progress.completions[challenge.id]);
             return (
               <li key={challenge.id}>
@@ -187,6 +187,7 @@ function ChallengeView({ challenge, published, progress, setProgress }) {
       <article className="challengeCard">
         <p className="dailyEyebrow">Daily Word Challenge · {displayDate(challenge.date)}</p>
         <h1>Unscramble the cabin word.</h1>
+        {challenge.rotationVersion && <p>Daily practice · a repeating seven-puzzle collection.</p>}
         <p className="challengeClue"><strong>Clue:</strong> {challenge.clue}</p>
         <div className="letterTiles" aria-label={`Letters: ${challenge.letters.split("").join(", ")}`}>
           {challenge.letters.split("").map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
@@ -249,9 +250,9 @@ function ChallengeView({ challenge, published, progress, setProgress }) {
 }
 
 export function DailyChallengeApp({ pathname = window.location.pathname }) {
-  const canonicalDate = bogotaDateFromInstant();
-  const published = useMemo(() => getPublishedChallenges(DAILY_CHALLENGES, canonicalDate), [canonicalDate]);
-  const challengeIds = useMemo(() => DAILY_CHALLENGES.map((challenge) => challenge.id), []);
+  const canonicalDate = usePublicationDate();
+  const published = useMemo(() => scheduledChallenges(canonicalDate), [canonicalDate]);
+  const challengeIds = useMemo(() => published.map((challenge) => challenge.id), [published]);
   const [progress, setProgress] = useState(() => readDailyProgress(undefined, challengeIds));
   useEffect(() => {
     const refresh = (event) => {

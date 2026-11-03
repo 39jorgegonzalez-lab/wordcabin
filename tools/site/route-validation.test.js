@@ -5,6 +5,8 @@ import zlib from "node:zlib";
 
 import { DAILY_CHALLENGES } from "../../src/daily/challenges.js";
 import { bogotaDateFromInstant, getPublishedChallenges } from "../../src/daily/challenge-model.js";
+import { dailyResponse } from "../../api/daily-challenge.js";
+import { scheduledChallenge } from "../../src/daily/schedule.js";
 
 const root = path.resolve(import.meta.dirname, "..", "..");
 const dist = path.join(root, "dist");
@@ -135,3 +137,34 @@ for (const route of ["privacy", "advertising", "word-unscrambler"]) {
   for (const css of analyticsEntry.css || []) assert.ok(html.includes(`href="/${css}"`));
 }
 console.log("PASS: one lightweight current analytics entry on static pages; all app routes share the adapter");
+
+// Exercise the real built shell, not the unit-test fixture. Vercel routing itself
+// still needs hosted acceptance; these checks prove the function's output contract.
+const hosting = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
+assert.equal(hosting.buildCommand, 'npm run build');
+assert.equal(hosting.framework, 'vite');
+assert.equal(hosting.cleanUrls, true);
+assert.equal(hosting.functions['api/daily-challenge.js'].includeFiles, 'dist/_runtime/daily-shell.txt');
+assert.deepEqual(hosting.rewrites, [{source:'/daily-word-challenge/:date', destination:'/api/daily-challenge?date=:date'}]);
+assert.equal(read('_runtime/daily-shell.txt'), read('index.html'));
+for (const date of ['2026-09-22','2026-09-23','2026-09-24','2026-11-02','2026-11-03','2026-12-31','2027-01-01','2028-02-29','2031-07-18']) {
+  const result = dailyResponse(date, {now:new Date(`${date}T17:00:00Z`)});
+  assert.equal(result.status, 200);
+  assert.equal(result.headers['Cache-Control'], 'no-store');
+  assert.ok(result.body.includes(`https://wordcabin.com/daily-word-challenge/${date}/`));
+  assert.ok(result.body.includes(`/${manifest['index.html'].file}`));
+  assert.ok(!result.body.includes(dictionaryFile));
+  for (const [,href] of result.body.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
+    if (/^\/daily-word-challenge\/\d{4}-\d{2}-\d{2}\/$/.test(href)) {
+      assert.ok(scheduledChallenge(href.split('/')[2], date), `unpublished navigation: ${href}`);
+    } else {
+      const target = resolveLocal(href);
+      if (target) assert.ok(fs.existsSync(target), `runtime missing asset/link: ${href}`);
+    }
+  }
+}
+for (const date of ['2026-02-30','2026-9-22','2026-09-17','2026-11-04','../../secrets']) {
+  assert.equal(dailyResponse(date,{now:new Date('2026-11-03T17:00:00Z')}).status,404);
+}
+assert.equal(dailyResponse('2026-11-03',{now:new Date('2026-11-03T17:00:00Z'),readShell:()=>''}).status,503);
+console.log('PASS: runtime historical/current/future-date simulation uses actual hashed assets, valid navigation, no dictionary, no cached 404, and preserved Vercel build settings');
