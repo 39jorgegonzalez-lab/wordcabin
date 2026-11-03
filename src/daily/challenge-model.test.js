@@ -7,12 +7,17 @@ import {
   computeStreaks,
   findChallengeByPath,
   getChallengeNavigation,
+  getPublishedChallenges,
   parseCalendarDate,
   selectTodayOrLatest,
   validateChallengeDataset,
 } from "./challenge-model.js";
 
 const clone = () => structuredClone(DAILY_CHALLENGES);
+assert.equal(getPublishedChallenges(DAILY_CHALLENGES, "2026-09-24", "2026-09-21").at(-1).date, "2026-09-21");
+assert.equal(getPublishedChallenges(DAILY_CHALLENGES, "2026-09-18", "2026-09-24").length, 1);
+assert.equal(getPublishedChallenges(DAILY_CHALLENGES, "2026-11-02", "2026-11-02").length, 7);
+console.log("PASS: static deployment date bounds links without advancing Bogotá publication dates");
 const validate = (challenges, options = {}) =>
   validateChallengeDataset(challenges, WORDS, { canonicalDate: "2026-09-18", ...options });
 const expectFailure = (mutate, pattern) => {

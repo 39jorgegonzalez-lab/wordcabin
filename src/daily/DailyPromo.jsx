@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { DAILY_CHALLENGES } from "./challenges.js";
 import {
@@ -7,11 +7,18 @@ import {
   computeStreaks,
   selectTodayOrLatest,
 } from "./challenge-model.js";
-import { readDailyProgress } from "./storage.js";
+import { DAILY_STORAGE_KEY, readDailyProgress } from "./storage.js";
 
 export function DailyPromo() {
   const challengeIds = useMemo(() => DAILY_CHALLENGES.map((challenge) => challenge.id), []);
-  const [progress] = useState(() => readDailyProgress(undefined, challengeIds));
+  const [progress, setProgress] = useState(() => readDailyProgress(undefined, challengeIds));
+  useEffect(() => {
+    const refresh = (event) => {
+      if (event.key === DAILY_STORAGE_KEY || event.key === null) setProgress(readDailyProgress(undefined, challengeIds));
+    };
+    window.addEventListener("storage", refresh);
+    return () => window.removeEventListener("storage", refresh);
+  }, [challengeIds]);
   const canonicalDate = bogotaDateFromInstant();
   const selection = selectTodayOrLatest(DAILY_CHALLENGES, canonicalDate);
   const streaks = computeStreaks(DAILY_CHALLENGES, progress.completions, canonicalDate);

@@ -60,3 +60,28 @@ const malformed = sanitizeDailyProgress({
 assert.deepEqual(malformed, emptyDailyProgress());
 console.log("PASS: malformed and unknown completion objects are rejected");
 console.log("=== DAILY_STORAGE_TESTS_COMPLETE ===");
+
+// Browsers may deny property access itself, before getItem/setItem is called.
+const originalStorage = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+try {
+  Object.defineProperty(globalThis, "localStorage", {
+    configurable: true,
+    get() { throw new Error("SecurityError"); },
+  });
+  assert.deepEqual(readDailyProgress(), emptyDailyProgress());
+  assert.equal(writeDailyProgress(progress), false);
+} finally {
+  if (originalStorage) Object.defineProperty(globalThis, "localStorage", originalStorage);
+  else delete globalThis.localStorage;
+}
+console.log("PASS: denied localStorage property access cannot crash daily rendering or completion");
+
+const second = DAILY_CHALLENGES[1];
+const staleTabProgress = recordCompletion(emptyDailyProgress(), second,
+  submitGuess(createGameState(second), second, second.answer), completedAt);
+writeDailyProgress(staleTabProgress, storage);
+assert.deepEqual(Object.keys(readDailyProgress(storage).completions).sort(), [challenge.id, second.id].sort());
+writeDailyProgress({ version: 1, completions: { [challenge.id]: { ...progress.completions[challenge.id], attempts: 4 } } }, storage);
+assert.equal(readDailyProgress(storage).completions[challenge.id].attempts, 1);
+assert.equal(writeDailyProgress(progress, null), false);
+console.log("PASS: stale tab writes preserve other completions and original completion records");

@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import fs from "node:fs";
+import { bogotaDateFromInstant } from "./src/daily/challenge-model.js";
 
 // Public SEO pages retain their HTML/content while using the same dev bootstrap.
 const toolPages = {
@@ -20,6 +21,7 @@ const toolPages = {
 };
 
 export default defineConfig({
+  define: { __WORDCABIN_BUILD_DATE__: JSON.stringify(bogotaDateFromInstant()) },
   plugins: [toolPages],
   build: {
     manifest: true,

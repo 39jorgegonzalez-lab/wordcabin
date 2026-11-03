@@ -15,6 +15,7 @@ import {
 } from "./challenge-model.js";
 import { createGameState, replayGame, submitGuess } from "./game-reducer.js";
 import {
+  DAILY_STORAGE_KEY,
   readDailyProgress,
   recordCompletion,
   writeDailyProgress,
@@ -185,7 +186,7 @@ function ChallengeView({ challenge, published, progress, setProgress }) {
       <DailyHeader />
       <article className="challengeCard">
         <p className="dailyEyebrow">Daily Word Challenge · {displayDate(challenge.date)}</p>
-        <h1>Unscramble today’s cabin word.</h1>
+        <h1>Unscramble the cabin word.</h1>
         <p className="challengeClue"><strong>Clue:</strong> {challenge.clue}</p>
         <div className="letterTiles" aria-label={`Letters: ${challenge.letters.split("").join(", ")}`}>
           {challenge.letters.split("").map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
@@ -252,6 +253,13 @@ export function DailyChallengeApp({ pathname = window.location.pathname }) {
   const published = useMemo(() => getPublishedChallenges(DAILY_CHALLENGES, canonicalDate), [canonicalDate]);
   const challengeIds = useMemo(() => DAILY_CHALLENGES.map((challenge) => challenge.id), []);
   const [progress, setProgress] = useState(() => readDailyProgress(undefined, challengeIds));
+  useEffect(() => {
+    const refresh = (event) => {
+      if (event.key === DAILY_STORAGE_KEY || event.key === null) setProgress(readDailyProgress(undefined, challengeIds));
+    };
+    window.addEventListener("storage", refresh);
+    return () => window.removeEventListener("storage", refresh);
+  }, [challengeIds]);
   const normalizedPath = pathname.endsWith("/") ? pathname : `${pathname}/`;
 
   if (normalizedPath === `${DAILY_ROUTE_PREFIX}/`) {

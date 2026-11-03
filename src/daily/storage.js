@@ -39,8 +39,9 @@ export function sanitizeDailyProgress(value, challengeIds = null) {
   return { version: DAILY_STORAGE_VERSION, completions };
 }
 
-export function readDailyProgress(storage = globalThis.localStorage, challengeIds = null) {
+export function readDailyProgress(storage, challengeIds = null) {
   try {
+    if (storage === undefined) storage = globalThis.localStorage;
     const raw = storage?.getItem(DAILY_STORAGE_KEY);
     if (!raw) return emptyDailyProgress();
     return sanitizeDailyProgress(JSON.parse(raw), challengeIds);
@@ -49,9 +50,18 @@ export function readDailyProgress(storage = globalThis.localStorage, challengeId
   }
 }
 
-export function writeDailyProgress(progress, storage = globalThis.localStorage) {
+export function writeDailyProgress(progress, storage) {
   try {
-    storage?.setItem(DAILY_STORAGE_KEY, JSON.stringify(progress));
+    if (storage === undefined) storage = globalThis.localStorage;
+    if (!storage) return false;
+    const incoming = sanitizeDailyProgress(progress);
+    const existing = readDailyProgress(storage);
+    // A stale tab must not erase a different tab's completed challenges or
+    // replace an original completion with a later solve of the same puzzle.
+    storage.setItem(DAILY_STORAGE_KEY, JSON.stringify({
+      version: DAILY_STORAGE_VERSION,
+      completions: { ...incoming.completions, ...existing.completions },
+    }));
     return true;
   } catch {
     return false;

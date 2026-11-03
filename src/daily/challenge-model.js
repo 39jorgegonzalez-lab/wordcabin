@@ -50,8 +50,11 @@ export function challengeRoute(challengeOrDate) {
   return `${DAILY_ROUTE_PREFIX}/${date}/`;
 }
 
-export function getPublishedChallenges(challenges, canonicalDate = bogotaDateFromInstant()) {
-  return orderChallenges(challenges).filter((challenge) => challenge.date <= canonicalDate);
+// A static deployment must never advertise a date whose HTML was not built.
+const builtThrough = typeof __WORDCABIN_BUILD_DATE__ === "string" ? __WORDCABIN_BUILD_DATE__ : null;
+export function getPublishedChallenges(challenges, canonicalDate = bogotaDateFromInstant(), availableThrough = builtThrough) {
+  const cutoff = availableThrough && availableThrough < canonicalDate ? availableThrough : canonicalDate;
+  return orderChallenges(challenges).filter((challenge) => challenge.date <= cutoff);
 }
 
 export function selectTodayOrLatest(challenges, canonicalDate = bogotaDateFromInstant()) {
