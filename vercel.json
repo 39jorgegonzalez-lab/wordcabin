@@ -9,6 +9,10 @@
   },
   "rewrites": [
     {
+      "source": "/daily-word-challenge/:date/",
+      "destination": "/api/daily-challenge?date=:date"
+    },
+    {
       "source": "/daily-word-challenge/:date",
       "destination": "/api/daily-challenge?date=:date"
     }

@@ -7,7 +7,7 @@
     "test": "npm run test:existing && npm run test:daily && npm run test:tools && npm run test:analytics && npm run test:ads",
     "test:existing": "node src/engine/solver.test.js && node tools/dictionary/source-contract.test.js && node tools/dictionary/source-eligibility.test.js && node tools/dictionary/candidate-qa.test.js && node tools/dictionary/candidate-evaluation.test.js && node tools/dictionary/build-candidate.test.js && node tools/dictionary/production-write-guard.test.js && node tools/site/site-foundations.test.js",
     "test:daily": "node src/daily/challenge-model.test.js && node src/daily/game-reducer.test.js && node src/daily/storage.test.js && node src/daily/analytics.test.js && node tools/daily/daily-pages.test.js && node src/daily/schedule.test.js && node src/daily/publication-ui.test.js && node tools/daily/build-inventory-v2.js && node src/daily/inventory-v2.test.js",
-    "test:routes": "node tools/site/route-validation.test.js",
+    "test:routes": "node tools/site/route-validation.test.js && npm run test:routing",
     "verify": "npm test && npm run build && npm run test:routes",
     "daily:validate": "node tools/daily/validate-challenges.js",
     "test:solver": "node src/engine/solver.test.js",
@@ -19,7 +19,8 @@
     "test:analytics": "node --test src/analytics/analytics.test.js && node src/analytics/analytics-ui.test.js",
     "test:ads": "node --test src/monetization/ads.test.js",
     "daily:inventory": "node tools/daily/validate-challenges.js",
-    "daily:generate-v2": "node tools/daily/build-inventory-v2.js"
+    "daily:generate-v2": "node tools/daily/build-inventory-v2.js",
+    "test:routing": "node tools/site/vercel-routing.test.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
@@ -29,6 +30,7 @@
     "vite": "8.3.5"
   },
   "devDependencies": {
+    "@vercel/routing-utils": "6.6.1",
     "jsdom": "^30.1.0"
   }
 }
