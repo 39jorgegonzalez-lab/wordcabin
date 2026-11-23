@@ -9,6 +9,7 @@ const robots = read("public/robots.txt");
 const main = [
   read("src/main.jsx"),
   read("src/solver/SolverApp.jsx"),
+  read("src/solver/ToolNavigation.js"),
   read("src/daily/DailyPromo.jsx"),
 ].join("\n");
 

@@ -5,6 +5,7 @@ import {
   Filter,
   BookOpen,
 } from "lucide-react";
+import { ToolNavigation } from "./ToolNavigation.js";
 import { WordSolver } from "./WordSolver.jsx";
 import { AdSlot } from "../monetization/AdSlot.jsx";
 import { DailyPromo } from "../daily/DailyPromo.jsx";
@@ -77,24 +78,7 @@ export function SolverApp() {
           </p>
         </article>
       </section>
-      <section className="explore" aria-labelledby="explore-title">
-        <p className="eyebrow">Explore WordCabin</p>
-        <h2 id="explore-title">Choose the word tool that fits.</h2>
-        <div className="exploreLinks">
-          <a href="/word-unscrambler/">
-            <strong>Word Unscrambler</strong>
-            <span>Build useful words from mixed-up letters.</span>
-          </a>
-          <a href="/anagram-solver/">
-            <strong>Anagram Solver</strong>
-            <span>Focus on rearrangements and full-length matches.</span>
-          </a>
-          <a href="/scrabble-word-finder/">
-            <strong>Tile-Game Word Finder</strong>
-            <span>Explore playable options from a letter rack.</span>
-          </a>
-        </div>
-      </section>
+      <ToolNavigation />
       <footer>
         <span>
           WordCabin · A cozy word finder for games, school, and curious minds.

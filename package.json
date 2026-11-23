@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "node tools/daily/validate-challenges.js && vite build && node tools/daily/generate-pages.js && node tools/site/generate-tool-pages.js && node tools/site/generate-analytics-pages.js",
+    "build": "node tools/daily/validate-challenges.js && vite build && node tools/daily/generate-pages.js && node tools/site/generate-tool-pages.js && node tools/site/generate-analytics-pages.js && node tools/site/render-home-navigation.js",
     "preview": "vite preview",
     "test": "npm run test:existing && npm run test:daily && npm run test:tools && npm run test:analytics && npm run test:ads",
     "test:existing": "node src/engine/solver.test.js && node tools/dictionary/source-contract.test.js && node tools/dictionary/source-eligibility.test.js && node tools/dictionary/candidate-qa.test.js && node tools/dictionary/candidate-evaluation.test.js && node tools/dictionary/build-candidate.test.js && node tools/dictionary/production-write-guard.test.js && node tools/site/site-foundations.test.js",
